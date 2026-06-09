@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kanban Klippel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     KANBAN KLIPPEL — esqueleto funcional
+     Paleta clara: Azul Oxford (#002147) + branco
+     Paleta escura: navy profundo (irmão do Oxford) + azul-céu
+     Tipografia: Inter (sans-serif, alta legibilidade), sem serifa
+     ============================================================ */
+
+  :root {
+    --oxford: #002147;
+    --oxford-2: #0a3a73;
+    --accent: #1B6EC2;
+
+    --bg: #eef1f6;
+    --surface: #ffffff;
+    --surface-2: #f6f8fb;
+    --topbar: #002147;
+    --topbar-ink: #ffffff;
+    --ink: #0f1b2d;
+    --ink-muted: #5a6b80;
+    --border: #d6dde8;
+    --border-strong: #b9c4d4;
+    --shadow: 0 1px 2px rgba(0,33,71,.08), 0 4px 14px rgba(0,33,71,.08);
+    --focus: #1B6EC2;
+  }
+
+  [data-theme="dark"] {
+    --oxford: #0a1626;
+    --oxford-2: #16335c;
+    --accent: #5b9bff;
+
+    --bg: #0a1626;
+    --surface: #13233b;
+    --surface-2: #182b48;
+    --topbar: #061020;
+    --topbar-ink: #eaf1fb;
+    --ink: #eaf1fb;
+    --ink-muted: #9bb0cd;
+    --border: #243650;
+    --border-strong: #33506f;
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.35);
+    --focus: #5b9bff;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    height: 100%;
+  }
+
+  body {
+    font-family: "Inter", -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  button { font-family: inherit; }
+
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  /* ---------- Topbar ---------- */
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 20px;
+    background: var(--topbar);
+    color: var(--topbar-ink);
+    box-shadow: 0 2px 10px rgba(0,0,0,.18);
+    flex-wrap: wrap;
+    z-index: 5;
+  }
+
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-right: 6px;
+  }
+  .brand .mark {
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+  }
+  .brand .mark .k { color: #ffffff; }
+  .brand .mark .klippel { color: #8fb4e6; }
+  [data-theme="dark"] .brand .mark .klippel { color: var(--accent); }
+
+  .project-name {
+    background: rgba(255,255,255,.10);
+    border: 1px solid rgba(255,255,255,.18);
+    color: var(--topbar-ink);
+    font: 600 15px "Inter", sans-serif;
+    padding: 7px 12px;
+    border-radius: 8px;
+    min-width: 160px;
+    max-width: 280px;
+  }
+  .project-name::placeholder { color: rgba(255,255,255,.6); }
+
+  .spacer { flex: 1 1 auto; }
+
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid rgba(255,255,255,.22);
+    background: rgba(255,255,255,.08);
+    color: var(--topbar-ink);
+    font-weight: 600;
+    font-size: 14px;
+    padding: 9px 13px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background .15s ease, transform .05s ease;
+    white-space: nowrap;
+  }
+  .btn:hover { background: rgba(255,255,255,.18); }
+  .btn:active { transform: translateY(1px); }
+  .btn.primary {
+    background: var(--accent);
+    border-color: transparent;
+    color: #fff;
+  }
+  .btn.primary:hover { filter: brightness(1.08); }
+  .btn .ico { font-size: 16px; line-height: 1; }
+
+  /* ---------- Board ---------- */
+  /* Área de trabalho: quadro + painel de anotações lado a lado */
+  .workspace {
+    flex: 1 1 auto;
+    display: flex;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .board {
+    flex: 1 1 auto;
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    overflow-x: auto;
+    align-items: flex-start;
+  }
+
+  /* ---------- Painel de anotações (post-its) ---------- */
+  .notes-panel {
+    width: 320px;
+    min-width: 320px;
+    border-left: 1px solid var(--border);
+    background: var(--surface-2);
+    display: flex;
+    flex-direction: column;
+  }
+  .notes-panel.closed { display: none; }
+
+  .notes-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .notes-head h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    flex: 1 1 auto;
+    color: var(--ink);
+  }
+  .notes-head .ico { font-size: 18px; }
+  .notes-add {
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 13px;
+    padding: 7px 11px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .notes-add:hover { border-color: var(--accent); color: var(--accent); }
+
+  .notes-list {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .note {
+    background: #fff4b8;
+    border-radius: 4px;
+    padding: 12px 12px 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,.18);
+    position: relative;
+  }
+  .note:nth-child(odd)  { transform: rotate(-0.7deg); }
+  .note:nth-child(even) { transform: rotate(0.7deg); }
+
+  .note textarea {
+    width: 100%;
+    border: none;
+    background: transparent;
+    resize: vertical;
+    min-height: 70px;
+    font: 500 14.5px "Inter", sans-serif;
+    color: #2b2b1e;
+    line-height: 1.45;
+    outline: none;
+  }
+  .note textarea::placeholder { color: rgba(43,43,30,.45); }
+
+  .note-foot {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .note-colors { display: flex; gap: 6px; flex: 1 1 auto; }
+  .note-colors .dot {
+    width: 16px; height: 16px; border-radius: 50%;
+    cursor: pointer; border: 2px solid rgba(0,0,0,.12);
+  }
+  .note-colors .dot.sel { border-color: rgba(0,0,0,.6); }
+  .note-del {
+    border: none; background: transparent; cursor: pointer;
+    color: #6b6b52; font-size: 15px; line-height: 1; padding: 2px 5px; border-radius: 6px;
+  }
+  .note-del:hover { color: #b91c1c; background: rgba(0,0,0,.07); }
+
+  .notes-empty {
+    color: var(--ink-muted);
+    font-size: 14px;
+    text-align: center;
+    margin: 24px 8px;
+  }
+
+  /* ---------- Rodapé ---------- */
+  .footer {
+    background: var(--topbar);
+    color: var(--topbar-ink);
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .02em;
+    padding: 10px 16px;
+  }
+  .footer-link {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .footer-link:hover { color: #8fb4e6; }
+
+  .column {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    width: 300px;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 120px);
+    box-shadow: var(--shadow);
+  }
+
+  .col-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 13px 13px 0 0;
+    color: #fff;
+  }
+  .col-head .swatch {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: rgba(255,255,255,.55);
+    flex: none;
+  }
+  .col-title {
+    font-weight: 700;
+    font-size: 16px;
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .col-count {
+    font-weight: 600;
+    font-size: 13px;
+    background: rgba(255,255,255,.22);
+    padding: 2px 9px;
+    border-radius: 999px;
+  }
+  .col-del {
+    border: none; background: transparent; color: inherit;
+    cursor: pointer; font-size: 18px; line-height: 1; opacity: .85;
+    padding: 2px 4px; border-radius: 6px;
+  }
+  .col-del:hover { opacity: 1; background: rgba(255,255,255,.2); }
+
+  .col-list {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    flex: 1 1 auto;
+    min-height: 60px;
+  }
+  .col-list.drag-over {
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+    border-radius: 0 0 13px 13px;
+  }
+
+  .add-item {
+    margin: 0 12px 12px;
+    border: 1px dashed var(--border-strong);
+    background: transparent;
+    color: var(--ink-muted);
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 9px;
+    cursor: pointer;
+  }
+  .add-item:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ---------- Card ---------- */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 11px 12px;
+    box-shadow: var(--shadow);
+    cursor: grab;
+  }
+  .card.dragging { opacity: .45; }
+  .card:active { cursor: grabbing; }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .card-title {
+    font-weight: 600;
+    font-size: 15.5px;
+    flex: 1 1 auto;
+    word-break: break-word;
+  }
+  .desc-toggle {
+    border: none; background: transparent; cursor: pointer;
+    color: var(--ink-muted); font-size: 14px; line-height: 1;
+    padding: 2px 5px; border-radius: 6px; flex: none;
+  }
+  .desc-toggle:hover { color: var(--accent); background: var(--surface-2); }
+  .desc-toggle .chev { display: inline-block; transition: transform .15s ease; }
+  .card.collapsed .desc-toggle .chev { transform: rotate(-90deg); }
+
+  .card-desc {
+    margin-top: 8px;
+    color: var(--ink-muted);
+    font-size: 14px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .card.collapsed .card-desc { display: none; }
+
+  .card-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 10px;
+    padding-top: 9px;
+    border-top: 1px solid var(--border);
+  }
+  .ctrl {
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--ink);
+    cursor: pointer;
+    font-size: 15px;
+    line-height: 1;
+    width: 30px; height: 30px;
+    border-radius: 7px;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .ctrl:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .ctrl:disabled { opacity: .3; cursor: default; }
+  .ctrl.grow { flex: 1 1 auto; width: auto; }
+  .ctrl.edit { margin-left: auto; }
+  .ctrl.danger:hover { border-color: #d33; color: #d33; }
+
+  /* ---------- Empty state ---------- */
+  .empty {
+    margin: auto;
+    text-align: center;
+    color: var(--ink-muted);
+    max-width: 360px;
+    padding: 40px;
+  }
+  .empty h2 { color: var(--ink); font-weight: 700; margin: 0 0 8px; }
+  .empty p { margin: 0 0 18px; }
+  .empty .btn { border-color: var(--border); background: var(--accent); color:#fff; }
+
+  /* ---------- Modal ---------- */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(2,10,24,.55);
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 20px; z-index: 50;
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    color: var(--ink);
+    width: 100%; max-width: 420px;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.4);
+    overflow: hidden;
+  }
+  .modal h3 {
+    margin: 0;
+    padding: 18px 20px;
+    background: var(--oxford);
+    color: #fff;
+    font-size: 17px; font-weight: 700;
+  }
+  [data-theme="dark"] .modal h3 { background: var(--oxford-2); }
+  .modal-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+  .field label { display: block; font-weight: 600; font-size: 13.5px; margin-bottom: 6px; }
+  .field input[type="text"], .field textarea {
+    width: 100%;
+    border: 1px solid var(--border-strong);
+    background: var(--surface-2);
+    color: var(--ink);
+    border-radius: 9px;
+    padding: 10px 12px;
+    font: 500 15px "Inter", sans-serif;
+  }
+  .field textarea { resize: vertical; min-height: 80px; }
+  .swatches { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .swatches .sw {
+    width: 30px; height: 30px; border-radius: 8px; cursor: pointer;
+    border: 3px solid transparent;
+  }
+  .swatches .sw.sel { border-color: var(--ink); }
+  .swatches input[type="color"] {
+    width: 42px; height: 32px; border: 1px solid var(--border-strong);
+    border-radius: 8px; background: var(--surface-2); cursor: pointer; padding: 2px;
+  }
+  .modal-foot {
+    display: flex; justify-content: flex-end; gap: 10px;
+    padding: 6px 20px 20px;
+  }
+  .mbtn {
+    border: 1px solid var(--border-strong);
+    background: var(--surface-2);
+    color: var(--ink);
+    font-weight: 600; font-size: 14px;
+    padding: 10px 16px; border-radius: 9px; cursor: pointer;
+  }
+  .mbtn.primary { background: var(--accent); border-color: transparent; color: #fff; }
+  .mbtn:hover { filter: brightness(1.04); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+  @media (max-width: 560px) {
+    .project-name { max-width: 150px; }
+    .btn .label { display: none; }
+  }
+</style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="mark"><span class="k">Kanban</span> <span class="klippel">Klippel</span></span>
+    </div>
+    <input id="projectName" class="project-name" type="text" value="Sem título" aria-label="Nome do projeto">
+    <div class="spacer"></div>
+    <div class="toolbar">
+      <button class="btn" id="btnNew"><span class="ico">✚</span><span class="label">Novo projeto</span></button>
+      <button class="btn" id="btnOpen"><span class="ico">📂</span><span class="label">Abrir</span></button>
+      <button class="btn" id="btnSave"><span class="ico">💾</span><span class="label">Salvar</span></button>
+      <button class="btn" id="btnToggleDesc"><span class="ico">👁</span><span class="label">Ocultar descrições</span></button>
+      <button class="btn" id="btnNotes"><span class="ico">🗒</span><span class="label">Anotações</span></button>
+      <button class="btn" id="btnTheme"><span class="ico">🌙</span><span class="label">Modo escuro</span></button>
+      <button class="btn primary" id="btnAddCol"><span class="ico">＋</span><span class="label">Nova coluna</span></button>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <main class="board" id="board" aria-label="Quadro Kanban"></main>
+    <aside class="notes-panel" id="notesPanel" aria-label="Anotações">
+      <div class="notes-head">
+        <span class="ico">🗒</span>
+        <h2>Anotações</h2>
+        <button class="notes-add" id="btnAddNote">＋ Nota</button>
+      </div>
+      <div class="notes-list" id="notesList"></div>
+    </aside>
+  </div>
+
+  <footer class="footer">Desenvolvido por <a class="footer-link" href="https://github.com/miqueiasklippel?tab=repositories" target="_blank" rel="noopener">M. A. KLIPPEL</a> | V. 1</footer>
+
+  <!-- hidden file input for "Abrir" -->
+  <input type="file" id="fileInput" accept="application/json,.json,.kanban" style="display:none">
+
+  <!-- Modal: coluna -->
+  <div class="overlay" id="colOverlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="colModalTitle">
+      <h3 id="colModalTitle">Nova coluna</h3>
+      <div class="modal-body">
+        <div class="field">
+          <label for="colNameInput">Nome da coluna</label>
+          <input type="text" id="colNameInput" placeholder="Ex.: A fazer">
+        </div>
+        <div class="field">
+          <label>Cor</label>
+          <div class="swatches" id="colSwatches"></div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="mbtn" id="colCancel">Cancelar</button>
+        <button class="mbtn primary" id="colSave">Criar coluna</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: item -->
+  <div class="overlay" id="itemOverlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="itemModalTitle">
+      <h3 id="itemModalTitle">Novo item</h3>
+      <div class="modal-body">
+        <div class="field">
+          <label for="itemTitleInput">Título</label>
+          <input type="text" id="itemTitleInput" placeholder="Ex.: Conferir folha de junho">
+        </div>
+        <div class="field">
+          <label for="itemDescInput">Descrição</label>
+          <textarea id="itemDescInput" placeholder="Detalhes do item (opcional)"></textarea>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="mbtn" id="itemCancel">Cancelar</button>
+        <button class="mbtn primary" id="itemSave">Adicionar</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ============================================================
+   ESTADO
+   Persistência: em memória apenas (este é o esqueleto).
+   Os botões Novo/Abrir/Salvar estão marcados com "TAURI:" nos
+   pontos exatos onde se conecta plugin-dialog + plugin-fs.
+   ============================================================ */
+
+const PRESETS = [
+  "#002147", // Azul Oxford
+  "#1B6EC2", // Azul
+  "#0F766E", // Verde-azulado
+  "#15803D", // Verde
+  "#B45309", // Âmbar
+  "#B91C1C", // Vermelho
+  "#6D28D9", // Roxo
+  "#475569"  // Cinza
+];
+
+// Cores dos post-its (anotações)
+const NOTE_COLORS = ["#fff4b8", "#ffd1dc", "#c7f0c2", "#cfe6ff", "#ffe0b3"];
+
+let state = {
+  name: "Sem título",
+  columns: [],
+  notes: []
+};
+
+let uidCounter = 0;
+function uid(prefix) { return prefix + "_" + Date.now().toString(36) + "_" + (uidCounter++); }
+
+/* ---------- Utilidades ---------- */
+function el(tag, props = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const key in props) {
+    const v = props[key];
+    if (key === "class") node.className = v;
+    else if (key === "text") node.textContent = v;       // conteúdo do usuário (seguro)
+    else if (key === "html") node.innerHTML = v;          // apenas ícones estáticos
+    else if (key.startsWith("on")) node.addEventListener(key.slice(2).toLowerCase(), v);
+    else if (v !== null && v !== undefined) node.setAttribute(key, v);
+  }
+  for (const c of children) {
+    if (c === null || c === undefined) continue;
+    node.append(c.nodeType ? c : document.createTextNode(c));
+  }
+  return node;
+}
+
+// Texto preto ou branco conforme o brilho da cor de fundo (contraste).
+function readableText(hex) {
+  const c = hex.replace("#", "");
+  const r = parseInt(c.substr(0, 2), 16),
+        g = parseInt(c.substr(2, 2), 16),
+        b = parseInt(c.substr(4, 2), 16);
+  const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return lum > 0.6 ? "#0f1b2d" : "#ffffff";
+}
+
+function findColumn(colId) { return state.columns.find(c => c.id === colId); }
+
+/* ============================================================
+   RENDERIZAÇÃO
+   ============================================================ */
+const board = document.getElementById("board");
+
+function render() {
+  document.getElementById("projectName").value = state.name;
+  renderNotes();
+  board.innerHTML = "";
+
+  if (state.columns.length === 0) {
+    board.append(
+      el("div", { class: "empty" },
+        el("h2", { text: "Nenhuma coluna ainda" }),
+        el("p", { text: "Crie a primeira coluna para começar a organizar suas tarefas." }),
+        el("button", { class: "btn", onClick: openColModal },
+          el("span", { class: "ico", html: "＋" }), " Nova coluna"
+        )
+      )
+    );
+    return;
+  }
+
+  state.columns.forEach((col, ci) => board.append(renderColumn(col, ci)));
+}
+
+function renderColumn(col, colIndex) {
+  const head = el("div", { class: "col-head" },
+    el("span", { class: "swatch" }),
+    el("span", { class: "col-title", text: col.name }),
+    el("span", { class: "col-count", text: String(col.items.length) }),
+    el("button", {
+      class: "col-del", title: "Excluir coluna", "aria-label": "Excluir coluna",
+      onClick: () => deleteColumn(col.id), html: "×"
+    })
+  );
+  head.style.background = col.color;
+  head.style.color = readableText(col.color);
+
+  const list = el("div", { class: "col-list", "data-col": col.id });
+  col.items.forEach((item, ii) => list.append(renderCard(col, colIndex, item, ii)));
+
+  // Alvos de soltar (drag-and-drop)
+  list.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    list.classList.add("drag-over");
+  });
+  list.addEventListener("dragleave", () => list.classList.remove("drag-over"));
+  list.addEventListener("drop", (e) => {
+    e.preventDefault();
+    list.classList.remove("drag-over");
+    if (!dragData) return;
+    const after = getDragAfterElement(list, e.clientY);
+    const beforeItemId = after ? after.getAttribute("data-item") : null;
+    moveItemTo(col.id, beforeItemId);
+  });
+
+  const addBtn = el("button", {
+    class: "add-item", onClick: () => openItemModal(col.id)
+  }, "＋ Adicionar item");
+
+  return el("div", { class: "column" }, head, list, addBtn);
+}
+
+function renderCard(col, colIndex, item, itemIndex) {
+  const hasDesc = item.description && item.description.trim().length > 0;
+
+  const card = el("div", {
+    class: "card" + (hasDesc && !item.descVisible ? " collapsed" : ""),
+    draggable: "true", "data-item": item.id, "data-col": col.id
+  });
+
+  // Topo: título + botão mostrar/ocultar descrição
+  const top = el("div", { class: "card-top" },
+    el("div", { class: "card-title", text: item.title })
+  );
+  if (hasDesc) {
+    top.append(el("button", {
+      class: "desc-toggle",
+      title: item.descVisible ? "Ocultar descrição" : "Mostrar descrição",
+      "aria-label": item.descVisible ? "Ocultar descrição" : "Mostrar descrição",
+      onClick: () => toggleDesc(col.id, item.id)
+    }, el("span", { class: "chev", html: "▾" })));
+  }
+  card.append(top);
+
+  if (hasDesc) {
+    card.append(el("div", { class: "card-desc", text: item.description }));
+  }
+
+  // Controles: ← ↑ ↓ →  | editar | excluir
+  const lastCol = state.columns.length - 1;
+  const lastItem = col.items.length - 1;
+  const controls = el("div", { class: "card-controls" },
+    el("button", { class: "ctrl", title: "Mover para coluna anterior", "aria-label": "Mover para coluna anterior",
+      disabled: colIndex === 0 ? "" : null, onClick: () => moveItemHorizontal(col.id, item.id, -1), html: "←" }),
+    el("button", { class: "ctrl", title: "Mover para cima", "aria-label": "Mover para cima",
+      disabled: itemIndex === 0 ? "" : null, onClick: () => moveItemVertical(col.id, item.id, -1), html: "↑" }),
+    el("button", { class: "ctrl", title: "Mover para baixo", "aria-label": "Mover para baixo",
+      disabled: itemIndex === lastItem ? "" : null, onClick: () => moveItemVertical(col.id, item.id, 1), html: "↓" }),
+    el("button", { class: "ctrl", title: "Mover para próxima coluna", "aria-label": "Mover para próxima coluna",
+      disabled: colIndex === lastCol ? "" : null, onClick: () => moveItemHorizontal(col.id, item.id, 1), html: "→" }),
+    el("button", { class: "ctrl edit", title: "Editar item", "aria-label": "Editar item",
+      onClick: () => openItemModal(col.id, item.id), html: "✎" }),
+    el("button", { class: "ctrl danger", title: "Excluir item", "aria-label": "Excluir item",
+      onClick: () => deleteItem(col.id, item.id), html: "🗑" })
+  );
+  card.append(controls);
+
+  // Arrastar
+  card.addEventListener("dragstart", () => {
+    dragData = { colId: col.id, itemId: item.id };
+    requestAnimationFrame(() => card.classList.add("dragging"));
+  });
+  card.addEventListener("dragend", () => {
+    card.classList.remove("dragging");
+    dragData = null;
+  });
+
+  return card;
+}
+
+/* ============================================================
+   DRAG & DROP
+   ============================================================ */
+let dragData = null;
+
+function getDragAfterElement(container, y) {
+  const cards = [...container.querySelectorAll(".card:not(.dragging)")];
+  let closest = { offset: -Infinity, element: null };
+  for (const child of cards) {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset) closest = { offset, element: child };
+  }
+  return closest.element;
+}
+
+function moveItemTo(targetColId, beforeItemId) {
+  const src = findColumn(dragData.colId);
+  const idx = src.items.findIndex(i => i.id === dragData.itemId);
+  if (idx === -1) return;
+  const [moved] = src.items.splice(idx, 1);
+
+  const tgt = findColumn(targetColId);
+  if (beforeItemId) {
+    const bi = tgt.items.findIndex(i => i.id === beforeItemId);
+    tgt.items.splice(bi === -1 ? tgt.items.length : bi, 0, moved);
+  } else {
+    tgt.items.push(moved);
+  }
+  render();
+}
+
+/* ============================================================
+   AÇÕES SOBRE ITENS E COLUNAS
+   ============================================================ */
+function moveItemVertical(colId, itemId, dir) {
+  const col = findColumn(colId);
+  const i = col.items.findIndex(x => x.id === itemId);
+  const j = i + dir;
+  if (j < 0 || j >= col.items.length) return;
+  [col.items[i], col.items[j]] = [col.items[j], col.items[i]];
+  render();
+}
+
+function moveItemHorizontal(colId, itemId, dir) {
+  const ci = state.columns.findIndex(c => c.id === colId);
+  const cj = ci + dir;
+  if (cj < 0 || cj >= state.columns.length) return;
+  const col = state.columns[ci];
+  const i = col.items.findIndex(x => x.id === itemId);
+  const [moved] = col.items.splice(i, 1);
+  state.columns[cj].items.push(moved);
+  render();
+}
+
+function toggleDesc(colId, itemId) {
+  const item = findColumn(colId).items.find(x => x.id === itemId);
+  item.descVisible = !item.descVisible;
+  render();
+}
+
+function deleteItem(colId, itemId) {
+  const col = findColumn(colId);
+  col.items = col.items.filter(x => x.id !== itemId);
+  render();
+}
+
+function deleteColumn(colId) {
+  const col = findColumn(colId);
+  if (col.items.length > 0 && !confirm(`Excluir a coluna "${col.name}" e seus ${col.items.length} item(ns)?`)) return;
+  state.columns = state.columns.filter(c => c.id !== colId);
+  render();
+}
+
+/* ============================================================
+   MODAL: COLUNA
+   ============================================================ */
+const colOverlay = document.getElementById("colOverlay");
+const colNameInput = document.getElementById("colNameInput");
+const colSwatches = document.getElementById("colSwatches");
+let selectedColor = PRESETS[0];
+
+function buildSwatches() {
+  colSwatches.innerHTML = "";
+  PRESETS.forEach(hex => {
+    const sw = el("span", {
+      class: "sw" + (hex === selectedColor ? " sel" : ""),
+      title: hex, onClick: () => { selectedColor = hex; syncSwatches(); }
+    });
+    sw.style.background = hex;
+    colSwatches.append(sw);
+  });
+  const custom = el("input", { type: "color", value: selectedColor, title: "Cor personalizada",
+    onInput: (e) => { selectedColor = e.target.value; syncSwatches(); } });
+  colSwatches.append(custom);
+}
+function syncSwatches() {
+  [...colSwatches.querySelectorAll(".sw")].forEach(sw =>
+    sw.classList.toggle("sel", sw.title === selectedColor));
+  const custom = colSwatches.querySelector('input[type="color"]');
+  if (custom) custom.value = selectedColor;
+}
+
+function openColModal() {
+  selectedColor = PRESETS[0];
+  colNameInput.value = "";
+  buildSwatches();
+  colOverlay.classList.add("open");
+  colNameInput.focus();
+}
+function closeColModal() { colOverlay.classList.remove("open"); }
+
+document.getElementById("btnAddCol").addEventListener("click", openColModal);
+document.getElementById("colCancel").addEventListener("click", closeColModal);
+document.getElementById("colSave").addEventListener("click", () => {
+  const name = colNameInput.value.trim() || "Nova coluna";
+  state.columns.push({ id: uid("col"), name, color: selectedColor, items: [] });
+  closeColModal();
+  render();
+});
+colNameInput.addEventListener("keydown", (e) => { if (e.key === "Enter") document.getElementById("colSave").click(); });
+
+/* ============================================================
+   MODAL: ITEM (adicionar e editar)
+   ============================================================ */
+const itemOverlay = document.getElementById("itemOverlay");
+const itemTitleInput = document.getElementById("itemTitleInput");
+const itemDescInput = document.getElementById("itemDescInput");
+let itemTarget = { colId: null, itemId: null };
+
+function openItemModal(colId, itemId = null) {
+  itemTarget = { colId, itemId };
+  const editing = !!itemId;
+  document.getElementById("itemModalTitle").textContent = editing ? "Editar item" : "Novo item";
+  document.getElementById("itemSave").textContent = editing ? "Salvar" : "Adicionar";
+  if (editing) {
+    const it = findColumn(colId).items.find(x => x.id === itemId);
+    itemTitleInput.value = it.title;
+    itemDescInput.value = it.description || "";
+  } else {
+    itemTitleInput.value = "";
+    itemDescInput.value = "";
+  }
+  itemOverlay.classList.add("open");
+  itemTitleInput.focus();
+}
+function closeItemModal() { itemOverlay.classList.remove("open"); }
+
+document.getElementById("itemCancel").addEventListener("click", closeItemModal);
+document.getElementById("itemSave").addEventListener("click", () => {
+  const title = itemTitleInput.value.trim();
+  if (!title) { itemTitleInput.focus(); return; }
+  const desc = itemDescInput.value.trim();
+  const col = findColumn(itemTarget.colId);
+  if (itemTarget.itemId) {
+    const it = col.items.find(x => x.id === itemTarget.itemId);
+    it.title = title;
+    it.description = desc;
+  } else {
+    col.items.push({ id: uid("item"), title, description: desc, descVisible: true });
+  }
+  closeItemModal();
+  render();
+});
+
+/* Fechar modais com Esc ou clique no fundo */
+[colOverlay, itemOverlay].forEach(ov => {
+  ov.addEventListener("click", (e) => { if (e.target === ov) ov.classList.remove("open"); });
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") { closeColModal(); closeItemModal(); }
+});
+
+/* ============================================================
+   MOSTRAR / OCULTAR TODAS AS DESCRIÇÕES
+   ============================================================ */
+let allVisible = true;
+document.getElementById("btnToggleDesc").addEventListener("click", (e) => {
+  allVisible = !allVisible;
+  state.columns.forEach(c => c.items.forEach(i => i.descVisible = allVisible));
+  e.currentTarget.querySelector(".label").textContent = allVisible ? "Ocultar descrições" : "Mostrar descrições";
+  render();
+});
+
+/* ============================================================
+   TEMA CLARO / ESCURO
+   ============================================================ */
+document.getElementById("btnTheme").addEventListener("click", (e) => {
+  const root = document.documentElement;
+  const dark = root.getAttribute("data-theme") === "dark";
+  root.setAttribute("data-theme", dark ? "light" : "dark");
+  e.currentTarget.querySelector(".ico").textContent = dark ? "🌙" : "☀";
+  e.currentTarget.querySelector(".label").textContent = dark ? "Modo escuro" : "Modo claro";
+});
+
+/* ============================================================
+   ANOTAÇÕES (post-its)
+   Salvas junto do projeto (fazem parte de state.notes).
+   ============================================================ */
+const notesList = document.getElementById("notesList");
+const notesPanel = document.getElementById("notesPanel");
+
+function renderNotes() {
+  notesList.innerHTML = "";
+  if (!state.notes || state.notes.length === 0) {
+    notesList.append(el("p", { class: "notes-empty",
+      text: "Sem anotações. Use o botão “＋ Nota” para criar um lembrete." }));
+    return;
+  }
+  state.notes.forEach(note => {
+    const ta = el("textarea", {
+      placeholder: "Escreva sua anotação…",
+      onInput: (e) => { note.text = e.target.value; }
+    });
+    ta.value = note.text || "";
+
+    const colors = el("div", { class: "note-colors" });
+    NOTE_COLORS.forEach(hex => {
+      const dot = el("span", {
+        class: "dot" + (hex === note.color ? " sel" : ""),
+        title: "Cor da nota",
+        onClick: () => setNoteColor(note.id, hex)
+      });
+      dot.style.background = hex;
+      colors.append(dot);
+    });
+
+    const foot = el("div", { class: "note-foot" },
+      colors,
+      el("button", { class: "note-del", title: "Excluir nota", "aria-label": "Excluir nota",
+        onClick: () => deleteNote(note.id), html: "🗑" })
+    );
+
+    const card = el("div", { class: "note" }, ta, foot);
+    card.style.background = note.color || NOTE_COLORS[0];
+    notesList.append(card);
+  });
+}
+
+function addNote() {
+  state.notes.push({ id: uid("note"), text: "", color: NOTE_COLORS[0] });
+  renderNotes();
+  const fields = notesList.querySelectorAll("textarea");
+  if (fields.length) fields[fields.length - 1].focus();
+}
+
+function deleteNote(id) {
+  state.notes = state.notes.filter(n => n.id !== id);
+  renderNotes();
+}
+
+function setNoteColor(id, color) {
+  const note = state.notes.find(n => n.id === id);
+  if (note) { note.color = color; renderNotes(); }
+}
+
+document.getElementById("btnAddNote").addEventListener("click", addNote);
+
+// Mostrar / ocultar o painel de anotações
+document.getElementById("btnNotes").addEventListener("click", () => {
+  notesPanel.classList.toggle("closed");
+});
+
+/* ============================================================
+   NOME DO PROJETO
+   ============================================================ */
+document.getElementById("projectName").addEventListener("input", (e) => {
+  state.name = e.target.value;
+});
+
+/* ============================================================
+   NOVO / ABRIR / SALVAR
+   No Tauri, troque estes três blocos pelos plugins nativos:
+   - Salvar:  import { save } from '@tauri-apps/plugin-dialog'
+              import { writeTextFile } from '@tauri-apps/plugin-fs'
+   - Abrir:   import { open } from '@tauri-apps/plugin-dialog'
+              import { readTextFile } from '@tauri-apps/plugin-fs'
+   - Pasta do app: import { appDataDir } from '@tauri-apps/api/path'
+   ============================================================ */
+
+// Arquivo atualmente aberto/salvo.
+// - No app Tauri: currentPath é o caminho real do arquivo (string).
+// - No navegador: currentFileHandle/currentFileName mantêm o mesmo comportamento.
+let currentPath = null;        // caminho do arquivo dentro do app Tauri
+let currentFileHandle = null;  // FileSystemFileHandle (navegador)
+let currentFileName = null;    // usado apenas no fallback de download
+
+// NOVO PROJETO
+document.getElementById("btnNew").addEventListener("click", () => {
+  const hasContent = state.columns.length > 0 || state.notes.length > 0;
+  if (hasContent && !confirm("Iniciar um novo projeto? As alterações não salvas serão perdidas.")) return;
+  state = { name: "Sem título", columns: [], notes: [] };
+  currentPath = null;
+  currentFileHandle = null;
+  currentFileName = null;
+  allVisible = true;
+  render();
+});
+
+// SALVAR — sobrescreve o MESMO arquivo; só pergunta o local na primeira vez.
+document.getElementById("btnSave").addEventListener("click", saveProject);
+
+async function saveProject() {
+  const data = JSON.stringify(state, null, 2);
+
+  // ---------- App Tauri (desktop): diálogo nativo + grava no mesmo caminho ----------
+  if (window.__TAURI__) {
+    const { save } = window.__TAURI__.dialog;
+    const { writeTextFile } = window.__TAURI__.fs;
+    try {
+      if (!currentPath) {
+        currentPath = await save({
+          defaultPath: (state.name || "kanban") + ".kanban",
+          filters: [{ name: "Kanban Klippel", extensions: ["kanban", "json"] }]
+        });
+        if (!currentPath) return; // usuário cancelou
+      }
+      await writeTextFile(currentPath, data);
+    } catch (err) {
+      alert("Não foi possível salvar o arquivo.");
+    }
+    return;
+  }
+
+  // ---------- Navegador: File System Access API, com download como alternativa ----------
+  try {
+    if (!currentFileHandle && window.showSaveFilePicker) {
+      currentFileHandle = await window.showSaveFilePicker({
+        suggestedName: (state.name || "kanban") + ".kanban",
+        types: [{ description: "Kanban Klippel", accept: { "application/json": [".kanban", ".json"] } }]
+      });
+    }
+    if (currentFileHandle) {
+      const writable = await currentFileHandle.createWritable();
+      await writable.write(data);
+      await writable.close();
+      return;
+    }
+  } catch (err) {
+    if (err && err.name === "AbortError") return;
+  }
+  const blob = new Blob([data], { type: "application/json" });
+  const a = el("a", { href: URL.createObjectURL(blob), download: currentFileName || (state.name || "kanban") + ".json" });
+  document.body.append(a); a.click(); a.remove();
+}
+
+// ABRIR — guarda o caminho/arquivo para que "Salvar" sobrescreva exatamente ele.
+document.getElementById("btnOpen").addEventListener("click", openProject);
+
+async function openProject() {
+  // ---------- App Tauri (desktop) ----------
+  if (window.__TAURI__) {
+    const { open } = window.__TAURI__.dialog;
+    const { readTextFile } = window.__TAURI__.fs;
+    try {
+      const selected = await open({
+        multiple: false,
+        filters: [{ name: "Kanban Klippel", extensions: ["kanban", "json"] }]
+      });
+      if (!selected) return; // cancelado
+      currentPath = selected;
+      loadFromText(await readTextFile(selected));
+    } catch (err) {
+      alert("Não foi possível abrir o arquivo.");
+    }
+    return;
+  }
+
+  // ---------- Navegador ----------
+  try {
+    if (window.showOpenFilePicker) {
+      const [handle] = await window.showOpenFilePicker({
+        types: [{ description: "Kanban Klippel", accept: { "application/json": [".kanban", ".json"] } }]
+      });
+      const file = await handle.getFile();
+      const text = await file.text();
+      currentFileHandle = handle;
+      currentFileName = file.name;
+      loadFromText(text);
+      return;
+    }
+  } catch (err) {
+    if (err && err.name === "AbortError") return;
+  }
+  document.getElementById("fileInput").click();
+}
+
+document.getElementById("fileInput").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  currentFileHandle = null;     // sem handle: "Salvar" baixará usando este nome
+  currentFileName = file.name;
+  const reader = new FileReader();
+  reader.onload = () => { loadFromText(reader.result); e.target.value = ""; };
+  reader.readAsText(file);
+});
+
+function loadFromText(text) {
+  try {
+    const parsed = JSON.parse(text);
+    if (!parsed || !Array.isArray(parsed.columns)) throw new Error("formato");
+    state = {
+      name: typeof parsed.name === "string" ? parsed.name : "Sem título",
+      columns: parsed.columns.map(c => ({
+        id: c.id || uid("col"),
+        name: c.name || "Coluna",
+        color: c.color || PRESETS[0],
+        items: Array.isArray(c.items) ? c.items.map(i => ({
+          id: i.id || uid("item"),
+          title: i.title || "Sem título",
+          description: i.description || "",
+          descVisible: i.descVisible !== false
+        })) : []
+      })),
+      notes: Array.isArray(parsed.notes) ? parsed.notes.map(n => ({
+        id: n.id || uid("note"),
+        text: typeof n.text === "string" ? n.text : "",
+        color: n.color || NOTE_COLORS[0]
+      })) : []
+    };
+    render();
+  } catch (err) {
+    alert("Não foi possível abrir o arquivo. Verifique se é um projeto Kanban Klippel válido.");
+  }
+}
+
+/* ============================================================
+   INÍCIO
+   ============================================================ */
+render();
+</script>
+</body>
+</html>

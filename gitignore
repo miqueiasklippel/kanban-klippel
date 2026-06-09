@@ -1,0 +1,23 @@
+# Dependências
+node_modules/
+
+# Saída de build do Tauri / Rust
+/src-tauri/target/
+
+# Saída do frontend (Vite)
+/dist/
+
+# Artefatos do Flatpak
+/build-dir/
+/repo/
+.flatpak-builder/
+
+# Pacotes gerados — vão para os Releases, não para o repositório
+*.AppImage
+*.deb
+*.rpm
+*.flatpak
+
+# Logs e temporários do sistema
+*.log
+.DS_Store
