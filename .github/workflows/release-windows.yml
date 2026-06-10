@@ -1,0 +1,52 @@
+name: build-windows
+
+# Dispara ao enviar uma tag de versão, ou manualmente (escolhendo a tag)
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag do release onde anexar o .exe (ex.: v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
+jobs:
+  build-windows:
+    permissions:
+      contents: write
+    runs-on: windows-latest
+    steps:
+      - name: Baixar o código (na versão da tag escolhida)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref_name }}
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Instalar Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache da compilação Rust
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Instalar dependências do projeto
+        run: npm install
+
+      - name: Compilar e publicar no release
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.event.inputs.tag || github.ref_name }}
+          releaseName: 'Kanban Klippel ${{ github.event.inputs.tag || github.ref_name }}'
+          releaseBody: 'Instalador para Windows. Veja os anexos para baixar.'
+          releaseDraft: false
+          prerelease: false
+          args: --bundles nsis
