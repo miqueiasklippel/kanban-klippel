@@ -2,11 +2,9 @@
 
 Aplicativo de quadro Kanban para organização de tarefas, com painel de anotações,
 modo claro/escuro e salvamento dos projetos em arquivo local. Funciona como
-aplicativo de desktop no Linux (empacotado com [Tauri](https://tauri.app)) e também
+aplicativo de desktop no Linux e no Windows (empacotado com [Tauri](https://tauri.app)) e também
 abre direto no navegador a partir do `index.html`.
 
-<!-- Substitua pela captura de tela do app -->
-<!-- ![Tela do Kanban Klippel](docs/screenshot.png) -->
 
 ## Recursos
 
@@ -46,6 +44,10 @@ chmod +x "kanban-klippel v.1.0.0.AppImage"
 > O AppImage exige uma versão recente da glibc. Em distribuições mais antigas,
 > prefira o `.rpm` ou o `.deb`.
 
+**Windows 10/11 (instalador `.exe`)**
+
+Baixe o arquivo `.exe` na página de Releases e dê dois cliques para instalar. Como o aplicativo ainda não tem assinatura digital, o Windows pode exibir um aviso do SmartScreen — clique em **"Mais informações" → "Executar assim mesmo"**.
+
 ## Como usar
 
 1. Clique em **Nova coluna** para criar etapas (ex.: A fazer, Em andamento, Concluído).
@@ -78,7 +80,7 @@ npm install
 npm run tauri dev
 ```
 
-### Gerar os pacotes
+### Gerar os pacotes (Linux)
 
 ```bash
 # .deb e .rpm
@@ -93,6 +95,10 @@ Os arquivos são gerados em `src-tauri/target/release/bundle/`.
 > Para um AppImage que rode também em sistemas mais antigos, compile dentro de um
 > container Ubuntu 22.04 (veja o `Containerfile`). Para gerar um Flatpak, use o
 > manifesto `com.klippel.kanban.yml`.
+
+### Versão Windows
+
+O instalador do Windows (`.exe`) é gerado automaticamente pelo GitHub Actions — não é preciso ter uma máquina Windows. O fluxo está em `.github/workflows/release-windows.yml`: ao enviar uma tag de versão (ou ao acionar o workflow manualmente pela aba **Actions**), o GitHub compila numa máquina Windows e anexa o instalador ao release correspondente.
 
 ## Tecnologias
 
