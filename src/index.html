@@ -9,502 +9,235 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   /* ============================================================
-     KANBAN KLIPPEL — esqueleto funcional
+     KANBAN KLIPPEL — v1.0.1
      Paleta clara: Azul Oxford (#002147) + branco
-     Paleta escura: navy profundo (irmão do Oxford) + azul-céu
-     Tipografia: Inter (sans-serif, alta legibilidade), sem serifa
+     Paleta escura: navy profundo + azul-céu
+     Tipografia: Inter (sans-serif, alta legibilidade)
      ============================================================ */
 
   :root {
-    --oxford: #002147;
-    --oxford-2: #0a3a73;
-    --accent: #1B6EC2;
-
-    --bg: #eef1f6;
-    --surface: #ffffff;
-    --surface-2: #f6f8fb;
-    --topbar: #002147;
-    --topbar-ink: #ffffff;
-    --ink: #0f1b2d;
-    --ink-muted: #5a6b80;
-    --border: #d6dde8;
-    --border-strong: #b9c4d4;
+    --oxford: #002147; --oxford-2: #0a3a73; --accent: #1B6EC2;
+    --bg: #eef1f6; --surface: #ffffff; --surface-2: #f6f8fb;
+    --topbar: #002147; --topbar-ink: #ffffff;
+    --ink: #0f1b2d; --ink-muted: #5a6b80;
+    --border: #d6dde8; --border-strong: #b9c4d4;
     --shadow: 0 1px 2px rgba(0,33,71,.08), 0 4px 14px rgba(0,33,71,.08);
     --focus: #1B6EC2;
   }
-
   [data-theme="dark"] {
-    --oxford: #0a1626;
-    --oxford-2: #16335c;
-    --accent: #5b9bff;
-
-    --bg: #0a1626;
-    --surface: #13233b;
-    --surface-2: #182b48;
-    --topbar: #061020;
-    --topbar-ink: #eaf1fb;
-    --ink: #eaf1fb;
-    --ink-muted: #9bb0cd;
-    --border: #243650;
-    --border-strong: #33506f;
+    --oxford: #0a1626; --oxford-2: #16335c; --accent: #5b9bff;
+    --bg: #0a1626; --surface: #13233b; --surface-2: #182b48;
+    --topbar: #061020; --topbar-ink: #eaf1fb;
+    --ink: #eaf1fb; --ink-muted: #9bb0cd;
+    --border: #243650; --border-strong: #33506f;
     --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.35);
     --focus: #5b9bff;
   }
 
   * { box-sizing: border-box; }
-
-  html, body {
-    margin: 0;
-    height: 100%;
-  }
-
+  html, body { margin: 0; height: 100%; }
   body {
     font-family: "Inter", -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-size: 16px;
-    line-height: 1.5;
-    color: var(--ink);
-    background: var(--bg);
-    display: flex;
-    flex-direction: column;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
+    font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--bg);
+    display: flex; flex-direction: column;
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
   }
-
   button { font-family: inherit; }
-
-  :focus-visible {
-    outline: 3px solid var(--focus);
-    outline-offset: 2px;
-    border-radius: 6px;
-  }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
 
   /* ---------- Topbar ---------- */
   .topbar {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 12px 20px;
-    background: var(--topbar);
-    color: var(--topbar-ink);
-    box-shadow: 0 2px 10px rgba(0,0,0,.18);
-    flex-wrap: wrap;
-    z-index: 5;
+    display: flex; align-items: center; gap: 16px; padding: 12px 20px;
+    background: var(--topbar); color: var(--topbar-ink);
+    box-shadow: 0 2px 10px rgba(0,0,0,.18); flex-wrap: wrap; z-index: 5;
   }
-
-  .brand {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    margin-right: 6px;
-  }
-  .brand .mark {
-    font-weight: 800;
-    font-size: 22px;
-    letter-spacing: -0.02em;
-  }
+  .brand { display: flex; align-items: baseline; gap: 10px; margin-right: 6px; }
+  .brand .mark { font-weight: 800; font-size: 22px; letter-spacing: -0.02em; }
   .brand .mark .k { color: #ffffff; }
   .brand .mark .klippel { color: #8fb4e6; }
   [data-theme="dark"] .brand .mark .klippel { color: var(--accent); }
 
   .project-name {
-    background: rgba(255,255,255,.10);
-    border: 1px solid rgba(255,255,255,.18);
-    color: var(--topbar-ink);
-    font: 600 15px "Inter", sans-serif;
-    padding: 7px 12px;
-    border-radius: 8px;
-    min-width: 160px;
-    max-width: 280px;
+    background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.18);
+    color: var(--topbar-ink); font: 600 15px "Inter", sans-serif;
+    padding: 7px 12px; border-radius: 8px; min-width: 150px; max-width: 240px;
   }
   .project-name::placeholder { color: rgba(255,255,255,.6); }
-
   .spacer { flex: 1 1 auto; }
-
   .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 
   .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    border: 1px solid rgba(255,255,255,.22);
-    background: rgba(255,255,255,.08);
-    color: var(--topbar-ink);
-    font-weight: 600;
-    font-size: 14px;
-    padding: 9px 13px;
-    border-radius: 9px;
-    cursor: pointer;
-    transition: background .15s ease, transform .05s ease;
-    white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 7px;
+    border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.08);
+    color: var(--topbar-ink); font-weight: 600; font-size: 14px;
+    padding: 9px 13px; border-radius: 9px; cursor: pointer;
+    transition: background .15s ease, transform .05s ease; white-space: nowrap;
   }
   .btn:hover { background: rgba(255,255,255,.18); }
   .btn:active { transform: translateY(1px); }
-  .btn.primary {
-    background: var(--accent);
-    border-color: transparent;
-    color: #fff;
-  }
+  .btn.primary { background: var(--accent); border-color: transparent; color: #fff; }
   .btn.primary:hover { filter: brightness(1.08); }
   .btn .ico { font-size: 16px; line-height: 1; }
 
-  /* ---------- Board ---------- */
-  /* Área de trabalho: quadro + painel de anotações lado a lado */
-  .workspace {
-    flex: 1 1 auto;
-    display: flex;
-    min-height: 0;
-    overflow: hidden;
-  }
+  /* ---------- Área de trabalho ---------- */
+  .workspace { flex: 1 1 auto; display: flex; min-height: 0; overflow: hidden; }
+  .board { flex: 1 1 auto; display: flex; gap: 16px; padding: 20px; overflow-x: auto; align-items: flex-start; }
 
-  .board {
-    flex: 1 1 auto;
-    display: flex;
-    gap: 16px;
-    padding: 20px;
-    overflow-x: auto;
-    align-items: flex-start;
-  }
-
-  /* ---------- Painel de anotações (post-its) ---------- */
+  /* ---------- Anotações (post-its) ---------- */
   .notes-panel {
-    width: 320px;
-    min-width: 320px;
-    border-left: 1px solid var(--border);
-    background: var(--surface-2);
-    display: flex;
-    flex-direction: column;
+    width: 320px; min-width: 320px; border-left: 1px solid var(--border);
+    background: var(--surface-2); display: flex; flex-direction: column;
   }
   .notes-panel.closed { display: none; }
-
-  .notes-head {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border);
-  }
-  .notes-head h2 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 700;
-    flex: 1 1 auto;
-    color: var(--ink);
-  }
+  .notes-head { display: flex; align-items: center; gap: 8px; padding: 14px 16px; border-bottom: 1px solid var(--border); }
+  .notes-head h2 { margin: 0; font-size: 16px; font-weight: 700; flex: 1 1 auto; color: var(--ink); }
   .notes-head .ico { font-size: 18px; }
   .notes-add {
-    border: 1px solid var(--border-strong);
-    background: var(--surface);
-    color: var(--ink);
-    font-weight: 600;
-    font-size: 13px;
-    padding: 7px 11px;
-    border-radius: 8px;
-    cursor: pointer;
+    border: 1px solid var(--border-strong); background: var(--surface); color: var(--ink);
+    font-weight: 600; font-size: 13px; padding: 7px 11px; border-radius: 8px; cursor: pointer;
   }
   .notes-add:hover { border-color: var(--accent); color: var(--accent); }
-
-  .notes-list {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  .note {
-    background: #fff4b8;
-    border-radius: 4px;
-    padding: 12px 12px 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,.18);
-    position: relative;
-  }
+  .notes-list { flex: 1 1 auto; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .note { background: #fff4b8; border-radius: 4px; padding: 12px 12px 10px; box-shadow: 0 4px 10px rgba(0,0,0,.18); position: relative; }
   .note:nth-child(odd)  { transform: rotate(-0.7deg); }
   .note:nth-child(even) { transform: rotate(0.7deg); }
-
   .note textarea {
-    width: 100%;
-    border: none;
-    background: transparent;
-    resize: vertical;
-    min-height: 70px;
-    font: 500 14.5px "Inter", sans-serif;
-    color: #2b2b1e;
-    line-height: 1.45;
-    outline: none;
+    width: 100%; border: none; background: transparent; resize: vertical; min-height: 70px;
+    font: 500 14.5px "Inter", sans-serif; color: #2b2b1e; line-height: 1.45; outline: none;
   }
   .note textarea::placeholder { color: rgba(43,43,30,.45); }
-
-  .note-foot {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 8px;
-  }
+  .note-foot { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
   .note-colors { display: flex; gap: 6px; flex: 1 1 auto; }
-  .note-colors .dot {
-    width: 16px; height: 16px; border-radius: 50%;
-    cursor: pointer; border: 2px solid rgba(0,0,0,.12);
-  }
+  .note-colors .dot { width: 16px; height: 16px; border-radius: 50%; cursor: pointer; border: 2px solid rgba(0,0,0,.12); }
   .note-colors .dot.sel { border-color: rgba(0,0,0,.6); }
-  .note-del {
-    border: none; background: transparent; cursor: pointer;
-    color: #6b6b52; font-size: 15px; line-height: 1; padding: 2px 5px; border-radius: 6px;
-  }
+  .note-del { border: none; background: transparent; cursor: pointer; color: #6b6b52; font-size: 15px; line-height: 1; padding: 2px 5px; border-radius: 6px; }
   .note-del:hover { color: #b91c1c; background: rgba(0,0,0,.07); }
-
-  .notes-empty {
-    color: var(--ink-muted);
-    font-size: 14px;
-    text-align: center;
-    margin: 24px 8px;
-  }
+  .notes-empty { color: var(--ink-muted); font-size: 14px; text-align: center; margin: 24px 8px; }
 
   /* ---------- Rodapé ---------- */
   .footer {
-    background: var(--topbar);
-    color: var(--topbar-ink);
-    text-align: center;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: .02em;
-    padding: 10px 16px;
+    background: var(--topbar); color: var(--topbar-ink); text-align: center;
+    font-size: 13px; font-weight: 600; letter-spacing: .02em; padding: 10px 16px;
   }
-  .footer-link {
-    color: inherit;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
+  .footer-link { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
   .footer-link:hover { color: #8fb4e6; }
 
+  /* ---------- Coluna ---------- */
   .column {
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    width: 300px;
-    min-width: 300px;
-    display: flex;
-    flex-direction: column;
-    max-height: calc(100vh - 120px);
-    box-shadow: var(--shadow);
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px;
+    width: 300px; min-width: 300px; display: flex; flex-direction: column;
+    max-height: calc(100vh - 130px); box-shadow: var(--shadow);
   }
-
+  .column.dragging { opacity: .35; }
   .col-head {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 14px;
-    border-radius: 13px 13px 0 0;
-    color: #fff;
+    display: flex; align-items: center; gap: 8px; padding: 12px 14px;
+    border-radius: 13px 13px 0 0; color: #fff; cursor: grab; touch-action: none;
   }
-  .col-head .swatch {
-    width: 12px; height: 12px; border-radius: 50%;
-    background: rgba(255,255,255,.55);
-    flex: none;
-  }
-  .col-title {
-    font-weight: 700;
-    font-size: 16px;
-    flex: 1 1 auto;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .col-count {
-    font-weight: 600;
-    font-size: 13px;
-    background: rgba(255,255,255,.22);
-    padding: 2px 9px;
-    border-radius: 999px;
-  }
-  .col-del {
-    border: none; background: transparent; color: inherit;
-    cursor: pointer; font-size: 18px; line-height: 1; opacity: .85;
-    padding: 2px 4px; border-radius: 6px;
-  }
-  .col-del:hover { opacity: 1; background: rgba(255,255,255,.2); }
+  .col-head .swatch { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,.55); flex: none; }
+  .col-title { font-weight: 700; font-size: 16px; flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .col-count { font-weight: 600; font-size: 13px; background: rgba(255,255,255,.22); padding: 2px 9px; border-radius: 999px; }
+  .col-btn { border: none; background: transparent; color: inherit; cursor: pointer; font-size: 16px; line-height: 1; opacity: .85; padding: 3px 5px; border-radius: 6px; }
+  .col-btn:hover:not(:disabled) { opacity: 1; background: rgba(255,255,255,.2); }
+  .col-btn:disabled { opacity: .3; cursor: default; }
+  .col-del { font-size: 18px; }
 
-  .col-list {
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    overflow-y: auto;
-    flex: 1 1 auto;
-    min-height: 60px;
-  }
-  .col-list.drag-over {
-    background: color-mix(in srgb, var(--accent) 14%, transparent);
-    border-radius: 0 0 13px 13px;
-  }
-
+  .col-list { padding: 12px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; flex: 1 1 auto; min-height: 60px; }
   .add-item {
-    margin: 0 12px 12px;
-    border: 1px dashed var(--border-strong);
-    background: transparent;
-    color: var(--ink-muted);
-    font-weight: 600;
-    font-size: 14px;
-    padding: 10px;
-    border-radius: 9px;
-    cursor: pointer;
+    margin: 0 12px 12px; border: 1px dashed var(--border-strong); background: transparent;
+    color: var(--ink-muted); font-weight: 600; font-size: 14px; padding: 10px; border-radius: 9px; cursor: pointer;
   }
   .add-item:hover { color: var(--accent); border-color: var(--accent); }
 
   /* ---------- Card ---------- */
   .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 11px;
-    padding: 11px 12px;
-    box-shadow: var(--shadow);
-    cursor: grab;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 11px;
+    padding: 11px 12px; box-shadow: var(--shadow); cursor: grab; touch-action: none;
   }
-  .card.dragging { opacity: .45; }
-  .card:active { cursor: grabbing; }
-
-  .card-top {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  .card-title {
-    font-weight: 600;
-    font-size: 15.5px;
-    flex: 1 1 auto;
-    word-break: break-word;
-  }
-  .desc-toggle {
-    border: none; background: transparent; cursor: pointer;
-    color: var(--ink-muted); font-size: 14px; line-height: 1;
-    padding: 2px 5px; border-radius: 6px; flex: none;
-  }
+  .card.dragging { opacity: .35; }
+  .card-flags { margin-bottom: 7px; }
+  .urg { display: inline-block; font-size: 11.5px; font-weight: 700; padding: 2px 9px; border-radius: 999px; color: #fff; letter-spacing: .02em; }
+  .card-top { display: flex; align-items: flex-start; gap: 8px; }
+  .card-title { font-weight: 600; font-size: 15.5px; flex: 1 1 auto; word-break: break-word; }
+  .desc-toggle { border: none; background: transparent; cursor: pointer; color: var(--ink-muted); font-size: 14px; line-height: 1; padding: 2px 5px; border-radius: 6px; flex: none; }
   .desc-toggle:hover { color: var(--accent); background: var(--surface-2); }
   .desc-toggle .chev { display: inline-block; transition: transform .15s ease; }
   .card.collapsed .desc-toggle .chev { transform: rotate(-90deg); }
-
-  .card-desc {
-    margin-top: 8px;
-    color: var(--ink-muted);
-    font-size: 14px;
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
+  .card-desc { margin-top: 8px; color: var(--ink-muted); font-size: 14px; white-space: pre-wrap; word-break: break-word; }
   .card.collapsed .card-desc { display: none; }
-
-  .card-controls {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin-top: 10px;
-    padding-top: 9px;
-    border-top: 1px solid var(--border);
-  }
+  .card-controls { display: flex; align-items: center; gap: 4px; margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--border); }
   .ctrl {
-    border: 1px solid var(--border);
-    background: var(--surface-2);
-    color: var(--ink);
-    cursor: pointer;
-    font-size: 15px;
-    line-height: 1;
-    width: 30px; height: 30px;
-    border-radius: 7px;
+    border: 1px solid var(--border); background: var(--surface-2); color: var(--ink); cursor: pointer;
+    font-size: 15px; line-height: 1; width: 30px; height: 30px; border-radius: 7px;
     display: inline-flex; align-items: center; justify-content: center;
   }
   .ctrl:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
   .ctrl:disabled { opacity: .3; cursor: default; }
-  .ctrl.grow { flex: 1 1 auto; width: auto; }
   .ctrl.edit { margin-left: auto; }
   .ctrl.danger:hover { border-color: #d33; color: #d33; }
 
-  /* ---------- Empty state ---------- */
-  .empty {
-    margin: auto;
-    text-align: center;
-    color: var(--ink-muted);
-    max-width: 360px;
-    padding: 40px;
+  /* ---------- Drag & drop (ponteiro) ---------- */
+  .drag-ghost {
+    position: fixed; pointer-events: none; z-index: 1000; opacity: .92;
+    box-shadow: 0 14px 34px rgba(0,0,0,.4); transform: rotate(1.5deg); margin: 0;
   }
+  .drop-indicator { background: var(--accent); border-radius: 3px; }
+  .drop-indicator.h { height: 4px; }
+  .drop-indicator.v { width: 4px; align-self: stretch; min-height: 200px; }
+  body.dragging-active { user-select: none; cursor: grabbing; }
+
+  /* ---------- Empty state ---------- */
+  .empty { margin: auto; text-align: center; color: var(--ink-muted); max-width: 360px; padding: 40px; }
   .empty h2 { color: var(--ink); font-weight: 700; margin: 0 0 8px; }
   .empty p { margin: 0 0 18px; }
   .empty .btn { border-color: var(--border); background: var(--accent); color:#fff; }
 
   /* ---------- Modal ---------- */
-  .overlay {
-    position: fixed; inset: 0;
-    background: rgba(2,10,24,.55);
-    display: none;
-    align-items: center; justify-content: center;
-    padding: 20px; z-index: 50;
-  }
+  .overlay { position: fixed; inset: 0; background: rgba(2,10,24,.55); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 50; }
   .overlay.open { display: flex; }
-  .modal {
-    background: var(--surface);
-    color: var(--ink);
-    width: 100%; max-width: 420px;
-    border-radius: 16px;
-    box-shadow: 0 20px 60px rgba(0,0,0,.4);
-    overflow: hidden;
-  }
-  .modal h3 {
-    margin: 0;
-    padding: 18px 20px;
-    background: var(--oxford);
-    color: #fff;
-    font-size: 17px; font-weight: 700;
-  }
+  .modal { background: var(--surface); color: var(--ink); width: 100%; max-width: 420px; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.4); overflow: hidden; max-height: 90vh; display: flex; flex-direction: column; }
+  .modal.wide { max-width: 580px; }
+  .modal h3 { margin: 0; padding: 18px 20px; background: var(--oxford); color: #fff; font-size: 17px; font-weight: 700; }
   [data-theme="dark"] .modal h3 { background: var(--oxford-2); }
-  .modal-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+  .modal-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
+  .modal-text { font-size: 14px; color: var(--ink-muted); margin: 0; line-height: 1.5; }
   .field label { display: block; font-weight: 600; font-size: 13.5px; margin-bottom: 6px; }
-  .field input[type="text"], .field textarea {
-    width: 100%;
-    border: 1px solid var(--border-strong);
-    background: var(--surface-2);
-    color: var(--ink);
-    border-radius: 9px;
-    padding: 10px 12px;
-    font: 500 15px "Inter", sans-serif;
+  .field input[type="text"], .field input[type="password"], .field textarea {
+    width: 100%; border: 1px solid var(--border-strong); background: var(--surface-2); color: var(--ink);
+    border-radius: 9px; padding: 10px 12px; font: 500 15px "Inter", sans-serif;
   }
   .field textarea { resize: vertical; min-height: 80px; }
   .swatches { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-  .swatches .sw {
-    width: 30px; height: 30px; border-radius: 8px; cursor: pointer;
-    border: 3px solid transparent;
-  }
+  .swatches .sw { width: 30px; height: 30px; border-radius: 8px; cursor: pointer; border: 3px solid transparent; }
   .swatches .sw.sel { border-color: var(--ink); }
-  .swatches input[type="color"] {
-    width: 42px; height: 32px; border: 1px solid var(--border-strong);
-    border-radius: 8px; background: var(--surface-2); cursor: pointer; padding: 2px;
-  }
-  .modal-foot {
-    display: flex; justify-content: flex-end; gap: 10px;
-    padding: 6px 20px 20px;
-  }
-  .mbtn {
-    border: 1px solid var(--border-strong);
-    background: var(--surface-2);
-    color: var(--ink);
-    font-weight: 600; font-size: 14px;
-    padding: 10px 16px; border-radius: 9px; cursor: pointer;
-  }
+  .swatches .sw-none { background: var(--surface); border: 1px solid var(--border-strong); position: relative; }
+  .swatches .sw-none::after { content: ""; position: absolute; inset: 3px; background: linear-gradient(to top right, transparent 44%, #d33 45%, #d33 55%, transparent 56%); }
+  .swatches .sw-none.sel { border: 3px solid var(--ink); }
+  .swatches input[type="color"] { width: 42px; height: 32px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface-2); cursor: pointer; padding: 2px; }
+  .urg-options { display: flex; gap: 8px; flex-wrap: wrap; }
+  .urg-btn { border: 1px solid var(--border-strong); background: var(--surface-2); color: var(--ink); padding: 7px 13px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; }
+  .urg-btn.sel { border-color: var(--accent); color: var(--accent); }
+  .pwd-error { color: #d33; font-size: 13px; margin: 0; min-height: 1.1em; }
+  .modal-foot { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px 20px; flex-wrap: wrap; }
+  .mbtn { border: 1px solid var(--border-strong); background: var(--surface-2); color: var(--ink); font-weight: 600; font-size: 14px; padding: 10px 16px; border-radius: 9px; cursor: pointer; }
   .mbtn.primary { background: var(--accent); border-color: transparent; color: #fff; }
   .mbtn:hover { filter: brightness(1.04); }
 
-  @media (prefers-reduced-motion: reduce) {
-    * { transition: none !important; }
-  }
-  @media (max-width: 560px) {
-    .project-name { max-width: 150px; }
-    .btn .label { display: none; }
-  }
+  /* ---------- Guia ---------- */
+  .guide-content h4 { margin: 12px 0 6px; font-size: 14.5px; color: var(--ink); }
+  .guide-content p, .guide-content li { font-size: 14px; color: var(--ink-muted); }
+  .guide-content ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+  .shortcuts { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+  .shortcuts li { display: flex; align-items: center; gap: 10px; }
+  kbd { background: var(--surface-2); border: 1px solid var(--border-strong); border-bottom-width: 2px; border-radius: 5px; padding: 1px 7px; font-family: inherit; font-size: 12.5px; font-weight: 700; color: var(--ink); white-space: nowrap; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  @media (max-width: 720px) { .project-name { max-width: 130px; } .btn .label { display: none; } }
 </style>
 </head>
 <body>
 
   <header class="topbar">
-    <div class="brand">
-      <span class="mark"><span class="k">Kanban</span> <span class="klippel">Klippel</span></span>
-    </div>
+    <div class="brand"><span class="mark"><span class="k">Kanban</span> <span class="klippel">Klippel</span></span></div>
     <input id="projectName" class="project-name" type="text" value="Sem título" aria-label="Nome do projeto">
     <div class="spacer"></div>
     <div class="toolbar">
@@ -513,6 +246,7 @@
       <button class="btn" id="btnSave"><span class="ico">💾</span><span class="label">Salvar</span></button>
       <button class="btn" id="btnToggleDesc"><span class="ico">👁</span><span class="label">Ocultar descrições</span></button>
       <button class="btn" id="btnNotes"><span class="ico">🗒</span><span class="label">Anotações</span></button>
+      <button class="btn" id="btnGuide"><span class="ico">❔</span><span class="label">Guia</span></button>
       <button class="btn" id="btnTheme"><span class="ico">🌙</span><span class="label">Modo escuro</span></button>
       <button class="btn primary" id="btnAddCol"><span class="ico">＋</span><span class="label">Nova coluna</span></button>
     </div>
@@ -530,9 +264,8 @@
     </aside>
   </div>
 
-  <footer class="footer">Desenvolvido por <a class="footer-link" href="https://github.com/miqueiasklippel?tab=repositories" target="_blank" rel="noopener">M. A. KLIPPEL</a> | V. 1</footer>
+  <footer class="footer">Desenvolvido por <a class="footer-link" href="https://github.com/miqueiasklippel?tab=repositories" target="_blank" rel="noopener">M. A. KLIPPEL</a> | V. 1.0.1</footer>
 
-  <!-- hidden file input for "Abrir" -->
   <input type="file" id="fileInput" accept="application/json,.json,.kanban" style="display:none">
 
   <!-- Modal: coluna -->
@@ -540,14 +273,8 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="colModalTitle">
       <h3 id="colModalTitle">Nova coluna</h3>
       <div class="modal-body">
-        <div class="field">
-          <label for="colNameInput">Nome da coluna</label>
-          <input type="text" id="colNameInput" placeholder="Ex.: A fazer">
-        </div>
-        <div class="field">
-          <label>Cor</label>
-          <div class="swatches" id="colSwatches"></div>
-        </div>
+        <div class="field"><label for="colNameInput">Nome da coluna</label><input type="text" id="colNameInput" placeholder="Ex.: A fazer"></div>
+        <div class="field"><label>Cor</label><div class="swatches" id="colSwatches"></div></div>
       </div>
       <div class="modal-foot">
         <button class="mbtn" id="colCancel">Cancelar</button>
@@ -561,14 +288,10 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="itemModalTitle">
       <h3 id="itemModalTitle">Novo item</h3>
       <div class="modal-body">
-        <div class="field">
-          <label for="itemTitleInput">Título</label>
-          <input type="text" id="itemTitleInput" placeholder="Ex.: Conferir folha de junho">
-        </div>
-        <div class="field">
-          <label for="itemDescInput">Descrição</label>
-          <textarea id="itemDescInput" placeholder="Detalhes do item (opcional)"></textarea>
-        </div>
+        <div class="field"><label for="itemTitleInput">Título</label><input type="text" id="itemTitleInput" placeholder="Ex.: Conferir folha de junho"></div>
+        <div class="field"><label for="itemDescInput">Descrição</label><textarea id="itemDescInput" placeholder="Detalhes do item (opcional)"></textarea></div>
+        <div class="field"><label>Urgência</label><div class="urg-options" id="urgOptions"></div></div>
+        <div class="field"><label>Cor do item</label><div class="swatches" id="itemSwatches"></div></div>
       </div>
       <div class="modal-foot">
         <button class="mbtn" id="itemCancel">Cancelar</button>
@@ -577,36 +300,121 @@
     </div>
   </div>
 
+  <!-- Modal: novo projeto (confirmação) -->
+  <div class="overlay" id="newOverlay">
+    <div class="modal" role="dialog" aria-modal="true">
+      <h3>Novo projeto</h3>
+      <div class="modal-body">
+        <p class="modal-text">Há um projeto aberto. O que deseja fazer com as alterações atuais antes de começar um novo quadro?</p>
+      </div>
+      <div class="modal-foot">
+        <button class="mbtn" id="newCancel">Cancelar</button>
+        <button class="mbtn" id="newDiscard">Descartar</button>
+        <button class="mbtn primary" id="newSave">Salvar e continuar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: definir senha (primeira gravação) -->
+  <div class="overlay" id="pwdSetOverlay">
+    <div class="modal" role="dialog" aria-modal="true">
+      <h3>Proteger o arquivo</h3>
+      <div class="modal-body">
+        <p class="modal-text">Você pode proteger este projeto com uma senha. O arquivo será criptografado e exigirá a senha para ser aberto.</p>
+        <div class="field"><label for="pwdSet1">Senha</label><input type="password" id="pwdSet1" autocomplete="new-password"></div>
+        <div class="field"><label for="pwdSet2">Confirmar senha</label><input type="password" id="pwdSet2" autocomplete="new-password"></div>
+        <p class="pwd-error" id="pwdSetError"></p>
+      </div>
+      <div class="modal-foot">
+        <button class="mbtn" id="pwdSetSkip">Salvar sem senha</button>
+        <button class="mbtn primary" id="pwdSetOk">Salvar com senha</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: digitar senha (abrir / salvar protegido) -->
+  <div class="overlay" id="pwdEnterOverlay">
+    <div class="modal" role="dialog" aria-modal="true">
+      <h3 id="pwdEnterTitle">Digite a senha</h3>
+      <div class="modal-body">
+        <p class="modal-text" id="pwdEnterText">Este projeto está protegido por senha.</p>
+        <div class="field"><label for="pwdEnter1">Senha</label><input type="password" id="pwdEnter1" autocomplete="current-password"></div>
+        <p class="pwd-error" id="pwdEnterError"></p>
+      </div>
+      <div class="modal-foot">
+        <button class="mbtn" id="pwdEnterCancel">Cancelar</button>
+        <button class="mbtn primary" id="pwdEnterOk">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: guia -->
+  <div class="overlay" id="guideOverlay">
+    <div class="modal wide" role="dialog" aria-modal="true">
+      <h3>Guia do Kanban Klippel</h3>
+      <div class="modal-body guide-content">
+        <p class="modal-text">Organize tarefas em colunas e cartões, com anotações avulsas ao lado. Tudo é salvo em um arquivo <code>.kanban</code> no seu computador.</p>
+        <div>
+          <h4>Colunas</h4>
+          <ul>
+            <li>Crie em "Nova coluna", definindo nome e cor.</li>
+            <li>Reordene arrastando o cabeçalho da coluna, ou pelos botões ◀ ▶.</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Itens</h4>
+          <ul>
+            <li>Adicione com título, descrição, nível de urgência e cor.</li>
+            <li>Mova com as setas (cima/baixo, entre colunas) ou arrastando o cartão.</li>
+            <li>Use o botão de descrição para mostrar/ocultar os detalhes.</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Arquivo e segurança</h4>
+          <ul>
+            <li>Ao salvar pela primeira vez, é possível definir uma senha; o arquivo fica criptografado.</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Atalhos de teclado</h4>
+          <ul class="shortcuts">
+            <li><kbd>Ctrl</kbd> + <kbd>N</kbd> — Novo projeto</li>
+            <li><kbd>Ctrl</kbd> + <kbd>S</kbd> — Salvar projeto atual</li>
+            <li><kbd>Ctrl</kbd> + <kbd>A</kbd> — Abrir projeto</li>
+            <li><kbd>Ctrl</kbd> + <kbd>1</kbd> — Exibir ou ocultar anotações</li>
+            <li><kbd>Ctrl</kbd> + <kbd>2</kbd> — Alternar modo claro/escuro</li>
+            <li><kbd>Ctrl</kbd> + <kbd>Q</kbd> — Nova coluna</li>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-foot"><button class="mbtn primary" id="guideClose">Fechar</button></div>
+    </div>
+  </div>
+
 <script>
 /* ============================================================
-   ESTADO
-   Persistência: em memória apenas (este é o esqueleto).
-   Os botões Novo/Abrir/Salvar estão marcados com "TAURI:" nos
-   pontos exatos onde se conecta plugin-dialog + plugin-fs.
+   CONSTANTES E ESTADO
    ============================================================ */
-
-const PRESETS = [
-  "#002147", // Azul Oxford
-  "#1B6EC2", // Azul
-  "#0F766E", // Verde-azulado
-  "#15803D", // Verde
-  "#B45309", // Âmbar
-  "#B91C1C", // Vermelho
-  "#6D28D9", // Roxo
-  "#475569"  // Cinza
+const PRESETS = ["#002147","#1B6EC2","#0F766E","#15803D","#B45309","#B91C1C","#6D28D9","#475569"];
+const NOTE_COLORS = ["#fff4b8","#ffd1dc","#c7f0c2","#cfe6ff","#ffe0b3"];
+const ITEM_COLORS = ["#1B6EC2","#0F766E","#15803D","#B45309","#B91C1C","#6D28D9","#475569"];
+const URGENCY = [
+  { key:"none", label:"Nenhuma", color:null },
+  { key:"low",  label:"Baixa",   color:"#15803D" },
+  { key:"med",  label:"Média",   color:"#B45309" },
+  { key:"high", label:"Alta",    color:"#B91C1C" }
 ];
 
-// Cores dos post-its (anotações)
-const NOTE_COLORS = ["#fff4b8", "#ffd1dc", "#c7f0c2", "#cfe6ff", "#ffe0b3"];
+let state = { name: "Sem título", columns: [], notes: [] };
 
-let state = {
-  name: "Sem título",
-  columns: [],
-  notes: []
-};
+let currentPath = null;        // caminho do arquivo (app Tauri)
+let currentFileHandle = null;  // FileSystemFileHandle (navegador)
+let currentFileName = null;    // nome p/ fallback de download
+let currentPassword = null;    // senha do projeto em memória (null = sem senha)
+let allVisible = true;
 
 let uidCounter = 0;
-function uid(prefix) { return prefix + "_" + Date.now().toString(36) + "_" + (uidCounter++); }
+function uid(p) { return p + "_" + Date.now().toString(36) + "_" + (uidCounter++); }
 
 /* ---------- Utilidades ---------- */
 function el(tag, props = {}, ...children) {
@@ -614,8 +422,8 @@ function el(tag, props = {}, ...children) {
   for (const key in props) {
     const v = props[key];
     if (key === "class") node.className = v;
-    else if (key === "text") node.textContent = v;       // conteúdo do usuário (seguro)
-    else if (key === "html") node.innerHTML = v;          // apenas ícones estáticos
+    else if (key === "text") node.textContent = v;
+    else if (key === "html") node.innerHTML = v;
     else if (key.startsWith("on")) node.addEventListener(key.slice(2).toLowerCase(), v);
     else if (v !== null && v !== undefined) node.setAttribute(key, v);
   }
@@ -625,18 +433,12 @@ function el(tag, props = {}, ...children) {
   }
   return node;
 }
-
-// Texto preto ou branco conforme o brilho da cor de fundo (contraste).
 function readableText(hex) {
   const c = hex.replace("#", "");
-  const r = parseInt(c.substr(0, 2), 16),
-        g = parseInt(c.substr(2, 2), 16),
-        b = parseInt(c.substr(4, 2), 16);
-  const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return lum > 0.6 ? "#0f1b2d" : "#ffffff";
+  const r = parseInt(c.substr(0,2),16), g = parseInt(c.substr(2,2),16), b = parseInt(c.substr(4,2),16);
+  return (0.299*r + 0.587*g + 0.114*b) / 255 > 0.6 ? "#0f1b2d" : "#ffffff";
 }
-
-function findColumn(colId) { return state.columns.find(c => c.id === colId); }
+function findColumn(id) { return state.columns.find(c => c.id === id); }
 
 /* ============================================================
    RENDERIZAÇÃO
@@ -647,73 +449,60 @@ function render() {
   document.getElementById("projectName").value = state.name;
   renderNotes();
   board.innerHTML = "";
-
   if (state.columns.length === 0) {
-    board.append(
-      el("div", { class: "empty" },
-        el("h2", { text: "Nenhuma coluna ainda" }),
-        el("p", { text: "Crie a primeira coluna para começar a organizar suas tarefas." }),
-        el("button", { class: "btn", onClick: openColModal },
-          el("span", { class: "ico", html: "＋" }), " Nova coluna"
-        )
-      )
-    );
+    board.append(el("div", { class: "empty" },
+      el("h2", { text: "Nenhuma coluna ainda" }),
+      el("p", { text: "Crie a primeira coluna para começar a organizar suas tarefas." }),
+      el("button", { class: "btn", onClick: openColModal }, el("span", { class:"ico", html:"＋" }), " Nova coluna")
+    ));
     return;
   }
-
   state.columns.forEach((col, ci) => board.append(renderColumn(col, ci)));
 }
 
 function renderColumn(col, colIndex) {
+  const columnEl = el("div", { class: "column", "data-colid": col.id });
+  const lastCol = state.columns.length - 1;
+
   const head = el("div", { class: "col-head" },
     el("span", { class: "swatch" }),
     el("span", { class: "col-title", text: col.name }),
     el("span", { class: "col-count", text: String(col.items.length) }),
-    el("button", {
-      class: "col-del", title: "Excluir coluna", "aria-label": "Excluir coluna",
-      onClick: () => deleteColumn(col.id), html: "×"
-    })
+    el("button", { class: "col-btn", title: "Mover coluna para a esquerda", "aria-label": "Mover coluna para a esquerda",
+      disabled: colIndex === 0 ? "" : null, onClick: () => moveColumn(col.id, -1), html: "◀" }),
+    el("button", { class: "col-btn", title: "Mover coluna para a direita", "aria-label": "Mover coluna para a direita",
+      disabled: colIndex === lastCol ? "" : null, onClick: () => moveColumn(col.id, 1), html: "▶" }),
+    el("button", { class: "col-btn col-del", title: "Excluir coluna", "aria-label": "Excluir coluna",
+      onClick: () => deleteColumn(col.id), html: "×" })
   );
   head.style.background = col.color;
   head.style.color = readableText(col.color);
+  head.addEventListener("pointerdown", (e) => pointerStart(e, "column", { colId: col.id }, columnEl));
 
   const list = el("div", { class: "col-list", "data-col": col.id });
   col.items.forEach((item, ii) => list.append(renderCard(col, colIndex, item, ii)));
 
-  // Alvos de soltar (drag-and-drop)
-  list.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    list.classList.add("drag-over");
-  });
-  list.addEventListener("dragleave", () => list.classList.remove("drag-over"));
-  list.addEventListener("drop", (e) => {
-    e.preventDefault();
-    list.classList.remove("drag-over");
-    if (!dragData) return;
-    const after = getDragAfterElement(list, e.clientY);
-    const beforeItemId = after ? after.getAttribute("data-item") : null;
-    moveItemTo(col.id, beforeItemId);
-  });
+  const addBtn = el("button", { class: "add-item", onClick: () => openItemModal(col.id) }, "＋ Adicionar item");
 
-  const addBtn = el("button", {
-    class: "add-item", onClick: () => openItemModal(col.id)
-  }, "＋ Adicionar item");
-
-  return el("div", { class: "column" }, head, list, addBtn);
+  columnEl.append(head, list, addBtn);
+  return columnEl;
 }
 
 function renderCard(col, colIndex, item, itemIndex) {
   const hasDesc = item.description && item.description.trim().length > 0;
+  const card = el("div", { class: "card" + (hasDesc && !item.descVisible ? " collapsed" : ""), "data-item": item.id, "data-col": col.id });
+  if (item.color) card.style.borderLeft = "6px solid " + item.color;
 
-  const card = el("div", {
-    class: "card" + (hasDesc && !item.descVisible ? " collapsed" : ""),
-    draggable: "true", "data-item": item.id, "data-col": col.id
-  });
+  if (item.urgency && item.urgency !== "none") {
+    const u = URGENCY.find(x => x.key === item.urgency);
+    if (u) {
+      const pill = el("span", { class: "urg", text: u.label });
+      pill.style.background = u.color;
+      card.append(el("div", { class: "card-flags" }, pill));
+    }
+  }
 
-  // Topo: título + botão mostrar/ocultar descrição
-  const top = el("div", { class: "card-top" },
-    el("div", { class: "card-title", text: item.title })
-  );
+  const top = el("div", { class: "card-top" }, el("div", { class: "card-title", text: item.title }));
   if (hasDesc) {
     top.append(el("button", {
       class: "desc-toggle",
@@ -723,15 +512,11 @@ function renderCard(col, colIndex, item, itemIndex) {
     }, el("span", { class: "chev", html: "▾" })));
   }
   card.append(top);
+  if (hasDesc) card.append(el("div", { class: "card-desc", text: item.description }));
 
-  if (hasDesc) {
-    card.append(el("div", { class: "card-desc", text: item.description }));
-  }
-
-  // Controles: ← ↑ ↓ →  | editar | excluir
-  const lastCol = state.columns.length - 1;
   const lastItem = col.items.length - 1;
-  const controls = el("div", { class: "card-controls" },
+  const lastCol = state.columns.length - 1;
+  card.append(el("div", { class: "card-controls" },
     el("button", { class: "ctrl", title: "Mover para coluna anterior", "aria-label": "Mover para coluna anterior",
       disabled: colIndex === 0 ? "" : null, onClick: () => moveItemHorizontal(col.id, item.id, -1), html: "←" }),
     el("button", { class: "ctrl", title: "Mover para cima", "aria-label": "Mover para cima",
@@ -744,52 +529,132 @@ function renderCard(col, colIndex, item, itemIndex) {
       onClick: () => openItemModal(col.id, item.id), html: "✎" }),
     el("button", { class: "ctrl danger", title: "Excluir item", "aria-label": "Excluir item",
       onClick: () => deleteItem(col.id, item.id), html: "🗑" })
-  );
-  card.append(controls);
+  ));
 
-  // Arrastar
-  card.addEventListener("dragstart", () => {
-    dragData = { colId: col.id, itemId: item.id };
-    requestAnimationFrame(() => card.classList.add("dragging"));
-  });
-  card.addEventListener("dragend", () => {
-    card.classList.remove("dragging");
-    dragData = null;
-  });
-
+  card.addEventListener("pointerdown", (e) => pointerStart(e, "item", { colId: col.id, itemId: item.id }, card));
   return card;
 }
 
 /* ============================================================
-   DRAG & DROP
+   DRAG & DROP POR PONTEIRO (itens e colunas)
+   Substitui o arrastar nativo do HTML5, instável no WebKitGTK.
    ============================================================ */
-let dragData = null;
+let drag = null;
+let indicator = null;
 
-function getDragAfterElement(container, y) {
-  const cards = [...container.querySelectorAll(".card:not(.dragging)")];
-  let closest = { offset: -Infinity, element: null };
-  for (const child of cards) {
-    const box = child.getBoundingClientRect();
-    const offset = y - box.top - box.height / 2;
-    if (offset < 0 && offset > closest.offset) closest = { offset, element: child };
-  }
-  return closest.element;
+function pointerStart(e, kind, ids, sourceEl) {
+  if (e.button !== 0) return;
+  if (e.target.closest("button, input, textarea, a")) return;
+  drag = { kind, ids, sourceEl, startX: e.clientX, startY: e.clientY, active: false, target: null, ghost: null };
+  window.addEventListener("pointermove", pointerMove);
+  window.addEventListener("pointerup", pointerEnd, { once: true });
 }
 
-function moveItemTo(targetColId, beforeItemId) {
-  const src = findColumn(dragData.colId);
-  const idx = src.items.findIndex(i => i.id === dragData.itemId);
+function pointerMove(e) {
+  if (!drag) return;
+  if (!drag.active) {
+    if (Math.hypot(e.clientX - drag.startX, e.clientY - drag.startY) < 5) return;
+    beginDrag(e);
+  }
+  e.preventDefault();
+  drag.ghost.style.left = (e.clientX - drag.offX) + "px";
+  drag.ghost.style.top = (e.clientY - drag.offY) + "px";
+  updateDropTarget(e);
+}
+
+function beginDrag(e) {
+  drag.active = true;
+  const rect = drag.sourceEl.getBoundingClientRect();
+  drag.offX = drag.startX - rect.left;
+  drag.offY = drag.startY - rect.top;
+  const ghost = drag.sourceEl.cloneNode(true);
+  ghost.classList.add("drag-ghost");
+  ghost.style.width = rect.width + "px";
+  ghost.style.left = rect.left + "px";
+  ghost.style.top = rect.top + "px";
+  document.body.append(ghost);
+  drag.ghost = ghost;
+  drag.sourceEl.classList.add("dragging");
+  document.body.classList.add("dragging-active");
+}
+
+function getIndicator(orient) {
+  if (!indicator) indicator = document.createElement("div");
+  indicator.className = "drop-indicator " + orient;
+  return indicator;
+}
+function removeIndicator() { if (indicator && indicator.parentNode) indicator.parentNode.removeChild(indicator); }
+
+function updateDropTarget(e) {
+  drag.ghost.style.display = "none";
+  const under = document.elementFromPoint(e.clientX, e.clientY);
+  drag.ghost.style.display = "";
+  removeIndicator();
+  drag.target = null;
+
+  if (drag.kind === "item") {
+    const list = under && under.closest(".col-list");
+    if (!list) return;
+    const after = getCardAfter(list, e.clientY);
+    drag.target = { colId: list.getAttribute("data-col"), beforeItemId: after ? after.getAttribute("data-item") : null };
+    const ind = getIndicator("h");
+    if (after) list.insertBefore(ind, after); else list.append(ind);
+  } else {
+    const colEl = under && under.closest(".column");
+    if (!colEl && !(under && under.closest(".board"))) return;
+    const after = getColumnAfter(board, e.clientX);
+    drag.target = { beforeColId: after ? after.getAttribute("data-colid") : null };
+    const ind = getIndicator("v");
+    if (after) board.insertBefore(ind, after); else board.append(ind);
+  }
+}
+
+function getCardAfter(list, y) {
+  const cards = [...list.querySelectorAll(".card:not(.dragging)")];
+  for (const c of cards) { const box = c.getBoundingClientRect(); if (y < box.top + box.height / 2) return c; }
+  return null;
+}
+function getColumnAfter(boardEl, x) {
+  const cols = [...boardEl.querySelectorAll(".column:not(.dragging)")];
+  for (const c of cols) { const box = c.getBoundingClientRect(); if (x < box.left + box.width / 2) return c; }
+  return null;
+}
+
+function pointerEnd() {
+  window.removeEventListener("pointermove", pointerMove);
+  const d = drag;
+  drag = null;
+  if (d && d.active) {
+    if (d.kind === "item" && d.target) moveItemToTarget(d.ids.colId, d.ids.itemId, d.target.colId, d.target.beforeItemId);
+    else if (d.kind === "column" && d.target) moveColumnToTarget(d.ids.colId, d.target.beforeColId);
+  }
+  removeIndicator();
+  if (d && d.ghost && d.ghost.parentNode) d.ghost.parentNode.removeChild(d.ghost);
+  document.body.classList.remove("dragging-active");
+  if (d && d.active) render();
+}
+
+function moveItemToTarget(srcColId, itemId, tgtColId, beforeItemId) {
+  const src = findColumn(srcColId);
+  const idx = src.items.findIndex(i => i.id === itemId);
   if (idx === -1) return;
   const [moved] = src.items.splice(idx, 1);
-
-  const tgt = findColumn(targetColId);
+  const tgt = findColumn(tgtColId);
+  if (!tgt) { src.items.splice(idx, 0, moved); return; }
   if (beforeItemId) {
     const bi = tgt.items.findIndex(i => i.id === beforeItemId);
     tgt.items.splice(bi === -1 ? tgt.items.length : bi, 0, moved);
-  } else {
-    tgt.items.push(moved);
-  }
-  render();
+  } else tgt.items.push(moved);
+}
+
+function moveColumnToTarget(srcColId, beforeColId) {
+  const i = state.columns.findIndex(c => c.id === srcColId);
+  if (i === -1) return;
+  const [moved] = state.columns.splice(i, 1);
+  if (beforeColId) {
+    const bi = state.columns.findIndex(c => c.id === beforeColId);
+    state.columns.splice(bi === -1 ? state.columns.length : bi, 0, moved);
+  } else state.columns.push(moved);
 }
 
 /* ============================================================
@@ -797,16 +662,13 @@ function moveItemTo(targetColId, beforeItemId) {
    ============================================================ */
 function moveItemVertical(colId, itemId, dir) {
   const col = findColumn(colId);
-  const i = col.items.findIndex(x => x.id === itemId);
-  const j = i + dir;
+  const i = col.items.findIndex(x => x.id === itemId), j = i + dir;
   if (j < 0 || j >= col.items.length) return;
   [col.items[i], col.items[j]] = [col.items[j], col.items[i]];
   render();
 }
-
 function moveItemHorizontal(colId, itemId, dir) {
-  const ci = state.columns.findIndex(c => c.id === colId);
-  const cj = ci + dir;
+  const ci = state.columns.findIndex(c => c.id === colId), cj = ci + dir;
   if (cj < 0 || cj >= state.columns.length) return;
   const col = state.columns[ci];
   const i = col.items.findIndex(x => x.id === itemId);
@@ -814,19 +676,22 @@ function moveItemHorizontal(colId, itemId, dir) {
   state.columns[cj].items.push(moved);
   render();
 }
-
+function moveColumn(colId, dir) {
+  const i = state.columns.findIndex(c => c.id === colId), j = i + dir;
+  if (j < 0 || j >= state.columns.length) return;
+  [state.columns[i], state.columns[j]] = [state.columns[j], state.columns[i]];
+  render();
+}
 function toggleDesc(colId, itemId) {
   const item = findColumn(colId).items.find(x => x.id === itemId);
   item.descVisible = !item.descVisible;
   render();
 }
-
 function deleteItem(colId, itemId) {
   const col = findColumn(colId);
   col.items = col.items.filter(x => x.id !== itemId);
   render();
 }
-
 function deleteColumn(colId) {
   const col = findColumn(colId);
   if (col.items.length > 0 && !confirm(`Excluir a coluna "${col.name}" e seus ${col.items.length} item(ns)?`)) return;
@@ -842,43 +707,30 @@ const colNameInput = document.getElementById("colNameInput");
 const colSwatches = document.getElementById("colSwatches");
 let selectedColor = PRESETS[0];
 
-function buildSwatches() {
+function buildColSwatches() {
   colSwatches.innerHTML = "";
   PRESETS.forEach(hex => {
-    const sw = el("span", {
-      class: "sw" + (hex === selectedColor ? " sel" : ""),
-      title: hex, onClick: () => { selectedColor = hex; syncSwatches(); }
-    });
-    sw.style.background = hex;
-    colSwatches.append(sw);
+    const sw = el("span", { class: "sw" + (hex === selectedColor ? " sel" : ""), title: hex,
+      onClick: () => { selectedColor = hex; syncColSwatches(); } });
+    sw.style.background = hex; colSwatches.append(sw);
   });
-  const custom = el("input", { type: "color", value: selectedColor, title: "Cor personalizada",
-    onInput: (e) => { selectedColor = e.target.value; syncSwatches(); } });
-  colSwatches.append(custom);
+  colSwatches.append(el("input", { type: "color", value: selectedColor, title: "Cor personalizada",
+    onInput: (e) => { selectedColor = e.target.value; syncColSwatches(); } }));
 }
-function syncSwatches() {
-  [...colSwatches.querySelectorAll(".sw")].forEach(sw =>
-    sw.classList.toggle("sel", sw.title === selectedColor));
+function syncColSwatches() {
+  [...colSwatches.querySelectorAll(".sw")].forEach(sw => sw.classList.toggle("sel", sw.title === selectedColor));
   const custom = colSwatches.querySelector('input[type="color"]');
   if (custom) custom.value = selectedColor;
 }
-
 function openColModal() {
-  selectedColor = PRESETS[0];
-  colNameInput.value = "";
-  buildSwatches();
-  colOverlay.classList.add("open");
-  colNameInput.focus();
+  selectedColor = PRESETS[0]; colNameInput.value = "";
+  buildColSwatches(); colOverlay.classList.add("open"); colNameInput.focus();
 }
-function closeColModal() { colOverlay.classList.remove("open"); }
-
 document.getElementById("btnAddCol").addEventListener("click", openColModal);
-document.getElementById("colCancel").addEventListener("click", closeColModal);
+document.getElementById("colCancel").addEventListener("click", () => colOverlay.classList.remove("open"));
 document.getElementById("colSave").addEventListener("click", () => {
-  const name = colNameInput.value.trim() || "Nova coluna";
-  state.columns.push({ id: uid("col"), name, color: selectedColor, items: [] });
-  closeColModal();
-  render();
+  state.columns.push({ id: uid("col"), name: colNameInput.value.trim() || "Nova coluna", color: selectedColor, items: [] });
+  colOverlay.classList.remove("open"); render();
 });
 colNameInput.addEventListener("keydown", (e) => { if (e.key === "Enter") document.getElementById("colSave").click(); });
 
@@ -888,76 +740,77 @@ colNameInput.addEventListener("keydown", (e) => { if (e.key === "Enter") documen
 const itemOverlay = document.getElementById("itemOverlay");
 const itemTitleInput = document.getElementById("itemTitleInput");
 const itemDescInput = document.getElementById("itemDescInput");
+const urgOptions = document.getElementById("urgOptions");
+const itemSwatches = document.getElementById("itemSwatches");
+const itemSaveBtn = document.getElementById("itemSave");
 let itemTarget = { colId: null, itemId: null };
+let selectedUrgency = "none";
+let selectedItemColor = null;
 
+function buildUrgOptions() {
+  urgOptions.innerHTML = "";
+  URGENCY.forEach(u => {
+    const b = el("button", { type: "button", class: "urg-btn", text: u.label, onClick: () => { selectedUrgency = u.key; syncUrg(); } });
+    urgOptions.append(b);
+  });
+  syncUrg();
+}
+function syncUrg() {
+  [...urgOptions.children].forEach((b, idx) => {
+    const u = URGENCY[idx], sel = u.key === selectedUrgency;
+    b.classList.toggle("sel", sel);
+    if (sel && u.color) { b.style.background = u.color; b.style.borderColor = "transparent"; b.style.color = "#fff"; }
+    else { b.style.background = ""; b.style.borderColor = ""; b.style.color = ""; }
+  });
+}
+function buildItemSwatches() {
+  itemSwatches.innerHTML = "";
+  itemSwatches.append(el("span", { class: "sw sw-none" + (selectedItemColor === null ? " sel" : ""), title: "Sem cor",
+    onClick: () => { selectedItemColor = null; syncItemSwatches(); } }));
+  ITEM_COLORS.forEach(hex => {
+    const sw = el("span", { class: "sw" + (hex === selectedItemColor ? " sel" : ""), title: hex,
+      onClick: () => { selectedItemColor = hex; syncItemSwatches(); } });
+    sw.style.background = hex; itemSwatches.append(sw);
+  });
+}
+function syncItemSwatches() {
+  [...itemSwatches.children].forEach(sw => {
+    const isNone = sw.classList.contains("sw-none");
+    sw.classList.toggle("sel", isNone ? selectedItemColor === null : sw.title === selectedItemColor);
+  });
+}
 function openItemModal(colId, itemId = null) {
   itemTarget = { colId, itemId };
   const editing = !!itemId;
   document.getElementById("itemModalTitle").textContent = editing ? "Editar item" : "Novo item";
-  document.getElementById("itemSave").textContent = editing ? "Salvar" : "Adicionar";
+  itemSaveBtn.textContent = editing ? "Salvar" : "Adicionar";
   if (editing) {
     const it = findColumn(colId).items.find(x => x.id === itemId);
-    itemTitleInput.value = it.title;
-    itemDescInput.value = it.description || "";
+    itemTitleInput.value = it.title; itemDescInput.value = it.description || "";
+    selectedUrgency = it.urgency || "none"; selectedItemColor = it.color || null;
   } else {
-    itemTitleInput.value = "";
-    itemDescInput.value = "";
+    itemTitleInput.value = ""; itemDescInput.value = ""; selectedUrgency = "none"; selectedItemColor = null;
   }
-  itemOverlay.classList.add("open");
-  itemTitleInput.focus();
+  buildUrgOptions(); buildItemSwatches();
+  itemOverlay.classList.add("open"); itemTitleInput.focus();
 }
-function closeItemModal() { itemOverlay.classList.remove("open"); }
-
-document.getElementById("itemCancel").addEventListener("click", closeItemModal);
-document.getElementById("itemSave").addEventListener("click", () => {
+document.getElementById("itemCancel").addEventListener("click", () => itemOverlay.classList.remove("open"));
+itemSaveBtn.addEventListener("click", () => {
   const title = itemTitleInput.value.trim();
   if (!title) { itemTitleInput.focus(); return; }
   const desc = itemDescInput.value.trim();
   const col = findColumn(itemTarget.colId);
   if (itemTarget.itemId) {
     const it = col.items.find(x => x.id === itemTarget.itemId);
-    it.title = title;
-    it.description = desc;
+    it.title = title; it.description = desc; it.urgency = selectedUrgency; it.color = selectedItemColor;
   } else {
-    col.items.push({ id: uid("item"), title, description: desc, descVisible: true });
+    col.items.push({ id: uid("item"), title, description: desc, descVisible: true, urgency: selectedUrgency, color: selectedItemColor });
   }
-  closeItemModal();
-  render();
-});
-
-/* Fechar modais com Esc ou clique no fundo */
-[colOverlay, itemOverlay].forEach(ov => {
-  ov.addEventListener("click", (e) => { if (e.target === ov) ov.classList.remove("open"); });
-});
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") { closeColModal(); closeItemModal(); }
-});
-
-/* ============================================================
-   MOSTRAR / OCULTAR TODAS AS DESCRIÇÕES
-   ============================================================ */
-let allVisible = true;
-document.getElementById("btnToggleDesc").addEventListener("click", (e) => {
-  allVisible = !allVisible;
-  state.columns.forEach(c => c.items.forEach(i => i.descVisible = allVisible));
-  e.currentTarget.querySelector(".label").textContent = allVisible ? "Ocultar descrições" : "Mostrar descrições";
-  render();
-});
-
-/* ============================================================
-   TEMA CLARO / ESCURO
-   ============================================================ */
-document.getElementById("btnTheme").addEventListener("click", (e) => {
-  const root = document.documentElement;
-  const dark = root.getAttribute("data-theme") === "dark";
-  root.setAttribute("data-theme", dark ? "light" : "dark");
-  e.currentTarget.querySelector(".ico").textContent = dark ? "🌙" : "☀";
-  e.currentTarget.querySelector(".label").textContent = dark ? "Modo escuro" : "Modo claro";
+  itemOverlay.classList.remove("open"); render();
 });
 
 /* ============================================================
    ANOTAÇÕES (post-its)
-   Salvas junto do projeto (fazem parte de state.notes).
    ============================================================ */
 const notesList = document.getElementById("notesList");
 const notesPanel = document.getElementById("notesPanel");
@@ -965,195 +818,292 @@ const notesPanel = document.getElementById("notesPanel");
 function renderNotes() {
   notesList.innerHTML = "";
   if (!state.notes || state.notes.length === 0) {
-    notesList.append(el("p", { class: "notes-empty",
-      text: "Sem anotações. Use o botão “＋ Nota” para criar um lembrete." }));
+    notesList.append(el("p", { class: "notes-empty", text: "Sem anotações. Use o botão “＋ Nota” para criar um lembrete." }));
     return;
   }
   state.notes.forEach(note => {
-    const ta = el("textarea", {
-      placeholder: "Escreva sua anotação…",
-      onInput: (e) => { note.text = e.target.value; }
-    });
+    const ta = el("textarea", { placeholder: "Escreva sua anotação…", onInput: (e) => { note.text = e.target.value; } });
     ta.value = note.text || "";
-
     const colors = el("div", { class: "note-colors" });
     NOTE_COLORS.forEach(hex => {
-      const dot = el("span", {
-        class: "dot" + (hex === note.color ? " sel" : ""),
-        title: "Cor da nota",
-        onClick: () => setNoteColor(note.id, hex)
-      });
-      dot.style.background = hex;
-      colors.append(dot);
+      const dot = el("span", { class: "dot" + (hex === note.color ? " sel" : ""), title: "Cor da nota", onClick: () => setNoteColor(note.id, hex) });
+      dot.style.background = hex; colors.append(dot);
     });
-
-    const foot = el("div", { class: "note-foot" },
-      colors,
-      el("button", { class: "note-del", title: "Excluir nota", "aria-label": "Excluir nota",
-        onClick: () => deleteNote(note.id), html: "🗑" })
-    );
-
+    const foot = el("div", { class: "note-foot" }, colors,
+      el("button", { class: "note-del", title: "Excluir nota", "aria-label": "Excluir nota", onClick: () => deleteNote(note.id), html: "🗑" }));
     const card = el("div", { class: "note" }, ta, foot);
     card.style.background = note.color || NOTE_COLORS[0];
     notesList.append(card);
   });
 }
-
 function addNote() {
   state.notes.push({ id: uid("note"), text: "", color: NOTE_COLORS[0] });
   renderNotes();
   const fields = notesList.querySelectorAll("textarea");
   if (fields.length) fields[fields.length - 1].focus();
 }
-
-function deleteNote(id) {
-  state.notes = state.notes.filter(n => n.id !== id);
-  renderNotes();
-}
-
-function setNoteColor(id, color) {
-  const note = state.notes.find(n => n.id === id);
-  if (note) { note.color = color; renderNotes(); }
-}
-
+function deleteNote(id) { state.notes = state.notes.filter(n => n.id !== id); renderNotes(); }
+function setNoteColor(id, color) { const n = state.notes.find(x => x.id === id); if (n) { n.color = color; renderNotes(); } }
+function toggleNotesPanel() { notesPanel.classList.toggle("closed"); }
 document.getElementById("btnAddNote").addEventListener("click", addNote);
+document.getElementById("btnNotes").addEventListener("click", toggleNotesPanel);
 
-// Mostrar / ocultar o painel de anotações
-document.getElementById("btnNotes").addEventListener("click", () => {
-  notesPanel.classList.toggle("closed");
+/* ============================================================
+   DESCRIÇÕES / TEMA
+   ============================================================ */
+document.getElementById("btnToggleDesc").addEventListener("click", (e) => {
+  allVisible = !allVisible;
+  state.columns.forEach(c => c.items.forEach(i => i.descVisible = allVisible));
+  e.currentTarget.querySelector(".label").textContent = allVisible ? "Ocultar descrições" : "Mostrar descrições";
+  render();
 });
+function toggleTheme() {
+  const root = document.documentElement;
+  const dark = root.getAttribute("data-theme") === "dark";
+  root.setAttribute("data-theme", dark ? "light" : "dark");
+  const btn = document.getElementById("btnTheme");
+  btn.querySelector(".ico").textContent = dark ? "🌙" : "☀";
+  btn.querySelector(".label").textContent = dark ? "Modo escuro" : "Modo claro";
+}
+document.getElementById("btnTheme").addEventListener("click", toggleTheme);
 
 /* ============================================================
    NOME DO PROJETO
    ============================================================ */
-document.getElementById("projectName").addEventListener("input", (e) => {
-  state.name = e.target.value;
+document.getElementById("projectName").addEventListener("input", (e) => { state.name = e.target.value; });
+
+/* ============================================================
+   CRIPTOGRAFIA (senha do arquivo) — Web Crypto: AES-GCM + PBKDF2
+   ============================================================ */
+function cryptoAvailable() { return !!(window.crypto && window.crypto.subtle); }
+function b64(buf) { return btoa(String.fromCharCode(...new Uint8Array(buf))); }
+function unb64(str) { return Uint8Array.from(atob(str), c => c.charCodeAt(0)); }
+async function deriveKey(password, salt) {
+  const mat = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 150000, hash: "SHA-256" },
+    mat, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+}
+async function encryptJSON(plaintext, password) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const key = await deriveKey(password, salt);
+  const cipher = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, new TextEncoder().encode(plaintext));
+  return JSON.stringify({ kanbanEncrypted: 1, salt: b64(salt), iv: b64(iv), data: b64(cipher) }, null, 2);
+}
+async function decryptJSON(envelope, password) {
+  const o = JSON.parse(envelope);
+  const key = await deriveKey(password, unb64(o.salt));
+  const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64(o.iv) }, key, unb64(o.data));
+  return new TextDecoder().decode(plain);
+}
+function isEncrypted(text) { try { const o = JSON.parse(text); return !!(o && o.kanbanEncrypted); } catch { return false; } }
+
+/* ---------- Diálogos de senha (Promise) ---------- */
+const pwdSetOverlay = document.getElementById("pwdSetOverlay");
+const pwdEnterOverlay = document.getElementById("pwdEnterOverlay");
+let pwdSetResolve = null, pwdEnterResolve = null;
+
+function promptSetPassword() {
+  return new Promise(res => {
+    pwdSetResolve = res;
+    document.getElementById("pwdSet1").value = "";
+    document.getElementById("pwdSet2").value = "";
+    document.getElementById("pwdSetError").textContent = "";
+    pwdSetOverlay.classList.add("open");
+    document.getElementById("pwdSet1").focus();
+  });
+}
+function resolveSetPwd(val) { if (pwdSetResolve) { const r = pwdSetResolve; pwdSetResolve = null; pwdSetOverlay.classList.remove("open"); r(val); } }
+document.getElementById("pwdSetOk").addEventListener("click", () => {
+  const a = document.getElementById("pwdSet1").value, b = document.getElementById("pwdSet2").value;
+  const err = document.getElementById("pwdSetError");
+  if (!a) { err.textContent = "Digite uma senha."; return; }
+  if (a !== b) { err.textContent = "As senhas não coincidem."; return; }
+  resolveSetPwd({ password: a });
 });
+document.getElementById("pwdSetSkip").addEventListener("click", () => resolveSetPwd({ password: null }));
+document.getElementById("pwdSet2").addEventListener("keydown", (e) => { if (e.key === "Enter") document.getElementById("pwdSetOk").click(); });
+
+function promptEnterPassword(text) {
+  return new Promise(res => {
+    pwdEnterResolve = res;
+    document.getElementById("pwdEnter1").value = "";
+    document.getElementById("pwdEnterError").textContent = "";
+    document.getElementById("pwdEnterText").textContent = text || "Este projeto está protegido por senha.";
+    pwdEnterOverlay.classList.add("open");
+    document.getElementById("pwdEnter1").focus();
+  });
+}
+function resolveEnterPwd(val) { if (pwdEnterResolve) { const r = pwdEnterResolve; pwdEnterResolve = null; pwdEnterOverlay.classList.remove("open"); r(val); } }
+document.getElementById("pwdEnterOk").addEventListener("click", () => {
+  const v = document.getElementById("pwdEnter1").value;
+  if (!v) { document.getElementById("pwdEnterError").textContent = "Digite a senha."; return; }
+  resolveEnterPwd(v);
+});
+document.getElementById("pwdEnterCancel").addEventListener("click", () => resolveEnterPwd(null));
+document.getElementById("pwdEnter1").addEventListener("keydown", (e) => { if (e.key === "Enter") document.getElementById("pwdEnterOk").click(); });
 
 /* ============================================================
    NOVO / ABRIR / SALVAR
-   No Tauri, troque estes três blocos pelos plugins nativos:
-   - Salvar:  import { save } from '@tauri-apps/plugin-dialog'
-              import { writeTextFile } from '@tauri-apps/plugin-fs'
-   - Abrir:   import { open } from '@tauri-apps/plugin-dialog'
-              import { readTextFile } from '@tauri-apps/plugin-fs'
-   - Pasta do app: import { appDataDir } from '@tauri-apps/api/path'
    ============================================================ */
+const newOverlay = document.getElementById("newOverlay");
 
-// Arquivo atualmente aberto/salvo.
-// - No app Tauri: currentPath é o caminho real do arquivo (string).
-// - No navegador: currentFileHandle/currentFileName mantêm o mesmo comportamento.
-let currentPath = null;        // caminho do arquivo dentro do app Tauri
-let currentFileHandle = null;  // FileSystemFileHandle (navegador)
-let currentFileName = null;    // usado apenas no fallback de download
-
-// NOVO PROJETO
-document.getElementById("btnNew").addEventListener("click", () => {
-  const hasContent = state.columns.length > 0 || state.notes.length > 0;
-  if (hasContent && !confirm("Iniciar um novo projeto? As alterações não salvas serão perdidas.")) return;
+function resetProject() {
   state = { name: "Sem título", columns: [], notes: [] };
-  currentPath = null;
-  currentFileHandle = null;
-  currentFileName = null;
-  allVisible = true;
-  render();
+  currentPath = null; currentFileHandle = null; currentFileName = null; currentPassword = null;
+  allVisible = true; render();
+}
+function newProjectFlow() {
+  const hasContent = state.columns.length > 0 || state.notes.length > 0;
+  if (!hasContent) { resetProject(); return; }
+  newOverlay.classList.add("open");
+}
+document.getElementById("btnNew").addEventListener("click", newProjectFlow);
+document.getElementById("newCancel").addEventListener("click", () => newOverlay.classList.remove("open"));
+document.getElementById("newDiscard").addEventListener("click", () => { newOverlay.classList.remove("open"); resetProject(); });
+document.getElementById("newSave").addEventListener("click", async () => {
+  newOverlay.classList.remove("open");
+  const ok = await saveProject();
+  if (ok) resetProject();
 });
 
-// SALVAR — sobrescreve o MESMO arquivo; só pergunta o local na primeira vez.
+// helpers de senha no salvar
+async function askSetPasswordIfPossible() {
+  // retorna: string (senha) | null (sem senha) | false (cancelado)
+  if (!cryptoAvailable()) return null;
+  const res = await promptSetPassword();
+  if (res === null) return false;
+  return res.password;
+}
+async function confirmPasswordToSave() {
+  const entered = await promptEnterPassword("Digite a senha para salvar as alterações.");
+  if (entered === null) return false;
+  if (entered !== currentPassword) { alert("Senha incorreta."); return false; }
+  return true;
+}
+async function buildContent() {
+  const json = JSON.stringify(state, null, 2);
+  if (!currentPassword) return json;
+  try { return await encryptJSON(json, currentPassword); }
+  catch { alert("Falha ao criptografar o arquivo."); return null; }
+}
+
 document.getElementById("btnSave").addEventListener("click", saveProject);
 
 async function saveProject() {
-  const data = JSON.stringify(state, null, 2);
-
-  // ---------- App Tauri (desktop): diálogo nativo + grava no mesmo caminho ----------
+  // ---------- App Tauri ----------
   if (window.__TAURI__) {
     const { save } = window.__TAURI__.dialog;
     const { writeTextFile } = window.__TAURI__.fs;
     try {
       if (!currentPath) {
-        currentPath = await save({
-          defaultPath: (state.name || "kanban") + ".kanban",
-          filters: [{ name: "Kanban Klippel", extensions: ["kanban", "json"] }]
-        });
-        if (!currentPath) return; // usuário cancelou
+        const path = await save({ defaultPath: (state.name || "kanban") + ".kanban",
+          filters: [{ name: "Kanban Klippel", extensions: ["kanban", "json"] }] });
+        if (!path) return false;
+        currentPath = path;
+        const pwd = await askSetPasswordIfPossible();
+        if (pwd === false) { currentPath = null; return false; }
+        currentPassword = pwd;
+      } else if (currentPassword) {
+        if (!(await confirmPasswordToSave())) return false;
       }
-      await writeTextFile(currentPath, data);
-    } catch (err) {
-      alert("Não foi possível salvar o arquivo.");
-    }
-    return;
+      const content = await buildContent();
+      if (content === null) return false;
+      await writeTextFile(currentPath, content);
+      return true;
+    } catch (err) { alert("Não foi possível salvar o arquivo."); return false; }
   }
 
-  // ---------- Navegador: File System Access API, com download como alternativa ----------
+  // ---------- Navegador (File System Access API) ----------
   try {
     if (!currentFileHandle && window.showSaveFilePicker) {
       currentFileHandle = await window.showSaveFilePicker({
         suggestedName: (state.name || "kanban") + ".kanban",
         types: [{ description: "Kanban Klippel", accept: { "application/json": [".kanban", ".json"] } }]
       });
+      const pwd = await askSetPasswordIfPossible();
+      if (pwd === false) { currentFileHandle = null; return false; }
+      currentPassword = pwd;
+    } else if (currentFileHandle && currentPassword) {
+      if (!(await confirmPasswordToSave())) return false;
     }
     if (currentFileHandle) {
-      const writable = await currentFileHandle.createWritable();
-      await writable.write(data);
-      await writable.close();
-      return;
+      const content = await buildContent();
+      if (content === null) return false;
+      const w = await currentFileHandle.createWritable();
+      await w.write(content); await w.close();
+      return true;
     }
-  } catch (err) {
-    if (err && err.name === "AbortError") return;
+  } catch (err) { if (err && err.name === "AbortError") return false; }
+
+  // ---------- Fallback: download ----------
+  if (currentPassword === null && cryptoAvailable()) {
+    const pwd = await askSetPasswordIfPossible();
+    if (pwd === false) return false;
+    currentPassword = pwd;
   }
-  const blob = new Blob([data], { type: "application/json" });
-  const a = el("a", { href: URL.createObjectURL(blob), download: currentFileName || (state.name || "kanban") + ".json" });
+  const content = await buildContent();
+  if (content === null) return false;
+  const blob = new Blob([content], { type: "application/json" });
+  const a = el("a", { href: URL.createObjectURL(blob), download: currentFileName || (state.name || "kanban") + ".kanban" });
   document.body.append(a); a.click(); a.remove();
+  return true;
 }
 
-// ABRIR — guarda o caminho/arquivo para que "Salvar" sobrescreva exatamente ele.
+/* ---------- Abrir ---------- */
 document.getElementById("btnOpen").addEventListener("click", openProject);
 
+async function decryptIfNeeded(text) {
+  // retorna o JSON em texto, ou null se cancelado/falhou
+  if (!isEncrypted(text)) { currentPassword = null; return text; }
+  if (!cryptoAvailable()) { alert("Este arquivo é criptografado, mas a criptografia não está disponível neste contexto."); return null; }
+  const pwd = await promptEnterPassword("Este projeto está protegido. Digite a senha para abrir.");
+  if (pwd === null) return null;
+  try { const json = await decryptJSON(text, pwd); currentPassword = pwd; return json; }
+  catch { alert("Senha incorreta ou arquivo corrompido."); return null; }
+}
+
 async function openProject() {
-  // ---------- App Tauri (desktop) ----------
+  // ---------- App Tauri ----------
   if (window.__TAURI__) {
     const { open } = window.__TAURI__.dialog;
     const { readTextFile } = window.__TAURI__.fs;
     try {
-      const selected = await open({
-        multiple: false,
-        filters: [{ name: "Kanban Klippel", extensions: ["kanban", "json"] }]
-      });
-      if (!selected) return; // cancelado
+      const selected = await open({ multiple: false, filters: [{ name: "Kanban Klippel", extensions: ["kanban", "json"] }] });
+      if (!selected) return;
+      const raw = await readTextFile(selected);
+      const json = await decryptIfNeeded(raw);
+      if (json === null) return;
       currentPath = selected;
-      loadFromText(await readTextFile(selected));
-    } catch (err) {
-      alert("Não foi possível abrir o arquivo.");
-    }
+      loadFromText(json);
+    } catch (err) { alert("Não foi possível abrir o arquivo."); }
     return;
   }
-
   // ---------- Navegador ----------
   try {
     if (window.showOpenFilePicker) {
-      const [handle] = await window.showOpenFilePicker({
-        types: [{ description: "Kanban Klippel", accept: { "application/json": [".kanban", ".json"] } }]
-      });
+      const [handle] = await window.showOpenFilePicker({ types: [{ description: "Kanban Klippel", accept: { "application/json": [".kanban", ".json"] } }] });
       const file = await handle.getFile();
-      const text = await file.text();
-      currentFileHandle = handle;
-      currentFileName = file.name;
-      loadFromText(text);
+      const raw = await file.text();
+      const json = await decryptIfNeeded(raw);
+      if (json === null) return;
+      currentFileHandle = handle; currentFileName = file.name;
+      loadFromText(json);
       return;
     }
-  } catch (err) {
-    if (err && err.name === "AbortError") return;
-  }
+  } catch (err) { if (err && err.name === "AbortError") return; }
   document.getElementById("fileInput").click();
 }
-
 document.getElementById("fileInput").addEventListener("change", (e) => {
   const file = e.target.files[0];
   if (!file) return;
-  currentFileHandle = null;     // sem handle: "Salvar" baixará usando este nome
-  currentFileName = file.name;
+  currentFileHandle = null; currentFileName = file.name;
   const reader = new FileReader();
-  reader.onload = () => { loadFromText(reader.result); e.target.value = ""; };
+  reader.onload = async () => {
+    const json = await decryptIfNeeded(reader.result);
+    if (json !== null) loadFromText(json);
+    e.target.value = "";
+  };
   reader.readAsText(file);
 });
 
@@ -1164,20 +1114,14 @@ function loadFromText(text) {
     state = {
       name: typeof parsed.name === "string" ? parsed.name : "Sem título",
       columns: parsed.columns.map(c => ({
-        id: c.id || uid("col"),
-        name: c.name || "Coluna",
-        color: c.color || PRESETS[0],
+        id: c.id || uid("col"), name: c.name || "Coluna", color: c.color || PRESETS[0],
         items: Array.isArray(c.items) ? c.items.map(i => ({
-          id: i.id || uid("item"),
-          title: i.title || "Sem título",
-          description: i.description || "",
-          descVisible: i.descVisible !== false
+          id: i.id || uid("item"), title: i.title || "Sem título", description: i.description || "",
+          descVisible: i.descVisible !== false, urgency: i.urgency || "none", color: i.color || null
         })) : []
       })),
       notes: Array.isArray(parsed.notes) ? parsed.notes.map(n => ({
-        id: n.id || uid("note"),
-        text: typeof n.text === "string" ? n.text : "",
-        color: n.color || NOTE_COLORS[0]
+        id: n.id || uid("note"), text: typeof n.text === "string" ? n.text : "", color: n.color || NOTE_COLORS[0]
       })) : []
     };
     render();
@@ -1185,6 +1129,42 @@ function loadFromText(text) {
     alert("Não foi possível abrir o arquivo. Verifique se é um projeto Kanban Klippel válido.");
   }
 }
+
+/* ============================================================
+   GUIA
+   ============================================================ */
+const guideOverlay = document.getElementById("guideOverlay");
+document.getElementById("btnGuide").addEventListener("click", () => guideOverlay.classList.add("open"));
+document.getElementById("guideClose").addEventListener("click", () => guideOverlay.classList.remove("open"));
+
+/* ============================================================
+   FECHAR MODAIS (fundo / Esc) + ATALHOS
+   ============================================================ */
+function closeOverlay(ov) {
+  if (ov === pwdSetOverlay) { resolveSetPwd(null); return; }
+  if (ov === pwdEnterOverlay) { resolveEnterPwd(null); return; }
+  ov.classList.remove("open");
+}
+document.querySelectorAll(".overlay").forEach(ov => {
+  ov.addEventListener("click", (e) => { if (e.target === ov) closeOverlay(ov); });
+});
+
+const SHORTCUTS = {
+  n: newProjectFlow,
+  s: () => saveProject(),
+  a: () => openProject(),
+  q: openColModal,
+  "1": toggleNotesPanel,
+  "2": toggleTheme
+};
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") { document.querySelectorAll(".overlay.open").forEach(closeOverlay); return; }
+  if (e.ctrlKey && !e.altKey && !e.metaKey) {
+    if (document.querySelector(".overlay.open")) return;   // não dispara com modal aberto
+    const fn = SHORTCUTS[e.key.toLowerCase()];
+    if (fn) { e.preventDefault(); e.stopPropagation(); fn(); }
+  }
+}, true);
 
 /* ============================================================
    INÍCIO
